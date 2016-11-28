@@ -1,0 +1,4 @@
+# install roles from the Ansible Galaxy
+- src: https://github.com/haxorof/ansible-role-hashicorp-tools
+  version: master
+  name: role-under-test

@@ -1,0 +1,95 @@
+---
+# tasks file
+- name: Architecture - linux_amd64
+  set_fact:
+    hashicorp_architecture:  linux_amd64
+  when: ansible_system == "Linux" and
+    ansible_architecture == "x86_64"
+
+- name: Architecture - linux_386
+  set_fact:
+    hashicorp_architecture: linux_386
+  when: ansible_system == "Linux" and
+    ansible_architecture == "i386"
+
+- name: Make sure unzip is available
+  package: >
+    name=unzip
+    state=present
+
+- name: Ensure HashiCorp temporary directory exists
+  file: >
+    path={{ hashicorp.download_dir }}
+    state=directory
+    mode=0755
+
+- name: Downloads Packages
+  get_url:
+    url: "{{ hashicorp.releases_location }}/{{ item.0.name }}/{{ item.0.version }}/{{ item.0.name }}_{{ item.0.version }}_{{ item.1.architecture }}.zip"
+    checksum: "{{ item.1.checksum }}"
+    dest: "{{ hashicorp.download_dir }}"
+    mode: 0755
+    validate_certs: no
+  become: yes
+  when: item.0.name in "{{ hashicorp_tools }}" and item.1.architecture == hashicorp_architecture
+  with_subelements:
+    - "{{ hashicorp.releases }}"
+    - architectures
+
+- name: Ensure HashiCorp directory exists
+  file: >
+    path={{ hashicorp.install_dir }}
+    state=directory
+    mode=0755
+  become: yes
+
+- name: Ensure HashiCorp tool directory exists
+  file: >
+    path={{ hashicorp.install_dir }}/{{ item.0.name }}_{{ item.0.version }}/bin
+    state=directory
+    mode=0755
+  become: yes
+  when: item.0.name in "{{ hashicorp_tools }}" and item.1.architecture == hashicorp_architecture
+  with_subelements:
+    - "{{ hashicorp.releases }}"
+    - architectures
+
+- name: Unpack Packages
+  unarchive: >
+    src="{{ hashicorp.download_dir }}/{{ item.0.name }}_{{ item.0.version }}_{{ item.1.architecture }}.zip"
+    dest="{{ hashicorp.install_dir }}/{{ item.0.name }}_{{ item.0.version }}/bin"
+    copy=no
+    mode=0755
+    owner="{{ hashicorp.system_user }}"
+    group="{{ hashicorp.system_group }}"
+    creates=yes
+  become: yes
+  when: item.0.name in "{{ hashicorp_tools }}" and item.1.architecture == hashicorp_architecture
+  with_subelements:
+    - "{{ hashicorp.releases }}"
+    - architectures
+
+- name: Removes symbolic links to packages
+  file:
+    path: "{{ hashicorp.system_bin_dir }}/{{ item.name }}"
+    state: "absent"
+  become: yes
+  when: item.name in "{{ hashicorp_tools }}"
+  with_items:
+    - "{{ hashicorp.releases }}"
+
+- name: Creates symbolic links to packages
+  file: >
+    src={{ hashicorp.install_dir }}/{{ item.0.name }}_{{ item.0.version }}/bin/{{ item.0.name }}
+    dest={{ hashicorp.system_bin_dir }}/{{ item.0.name }}
+    state=link
+  become: yes
+  when: item.0.name in "{{ hashicorp_tools }}" and item.1.architecture == hashicorp_architecture
+  with_subelements:
+    - "{{ hashicorp.releases }}"
+    - architectures
+
+- name: Ensure HashiCorp temporary directory is absent
+  file: >
+    dest="{{ hashicorp.download_dir }}"
+    state=absent

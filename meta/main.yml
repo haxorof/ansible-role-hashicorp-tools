@@ -1,0 +1,16 @@
+galaxy_info:
+  author: Bjorn Oscarsson
+  description: "Installs HashiCorp's DevOps Tool Suite"
+  min_ansible_version: 2.0
+  license: MIT
+  platforms:
+  - name: RedHat
+    versions:
+    - all
+  categories:
+  - system
+  - devops
+  - provision
+  - deployment
+
+dependencies: []

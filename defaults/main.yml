@@ -1,0 +1,47 @@
+---
+# defaults file
+hashicorp_architecture: linux_amd64
+hashicorp:
+  download_dir: /var/tmp/hashicorp
+  install_dir: /opt/hashicorp
+  system_bin_dir: /usr/local/bin
+  system_user: "{{ ansible_user_id }}"
+  system_group: "{{ ansible_user_id }}"
+  releases_location: https://releases.hashicorp.com
+  releases:
+    - name: packer
+      version: 0.12.0
+      architectures:
+        - architecture: linux_amd64
+          checksum: sha256:ce6362d527ba697e40b8c90a98d2034b7749e2357fa238b08536aed44f037073
+        - architecture: linux_386
+          checksum: sha256:1b63006e1799f530755910d48b0858d80f3e6300b245511f1bc8a082108b92b3
+    - name: terraform
+      version: 0.7.13
+      architectures:
+        - architecture: linux_amd64
+          checksum: sha256:5a4f762a194542d38406b9b92c722b57f7910344db084e24c9c43d7719f4aa18
+        - architecture: linux_386
+          checksum: sha256:69eeeec837837ff5c7c796a86f7ac5b1fb442220c228b4358b450cd906f8a3c3
+    - name: vault
+      version: 0.6.2
+      architectures:
+        - architecture: linux_amd64
+          checksum: sha256:91432c812b1264306f8d1ecf7dd237c3d7a8b2b6aebf4f887e487c4e7f69338c
+        - architecture: linux_386
+          checksum: sha256:85ca9e2d09e49089c76f00686d7914c840a2cbec0d18bf6429dc396265f7a730
+    - name: nomad
+      version: 0.5.0
+      architectures:
+        - architecture: linux_amd64
+          checksum: sha256:7f7b9af2b1ff3e2c6b837b6e95968415237bb304e1e82802bc42abf6f8645a43
+        - architecture: linux_386
+          checksum: sha256:f6701659e5a328ad3458eace523aeb24626886cd498d69d40d02d396ffa640dc
+    - name: consul
+      version: 0.7.1
+      architectures:
+        - architecture: linux_amd64
+          checksum: sha256:5dbfc555352bded8a39c7a8bf28b5d7cf47dec493bc0496e21603c84dfe41b4b
+        - architecture: linux_386
+          checksum: sha256:7a391a9adc251a5889405eab5512668b77e6ac0f7d818852928735fa82e8abad
+
