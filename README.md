@@ -2,9 +2,7 @@
 
 Installs HashiCorp's open source DevOps Tool Suite.
 
-## Prerequisites
-
-### Environment
+## Environment
 
 * Ansible 2.x
 
@@ -28,19 +26,14 @@ Example how to install all HashiCorp open source devops tools:
 
 ## Contribute
 
-## Prerequisites
-
 ### Development Environment
 
 * [Vagrant](https://www.vagrantup.com/) 1.8.7 or later 
   * Plugin: vagrant-vbguest
-    ```bash
-    vagrant plugin install vagrant-vbguest
-    ```
 
 * [VirtualBox](https://www.virtualbox.org/)
 
-## Test
+### Test
 
 To test this project go into the `test` directory and execute the following command:
 
