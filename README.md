@@ -16,14 +16,14 @@ Example how to write to install and remove HashiCorp open source DevOps tools:
   roles:
     - role: ansible-role-hashicorp-tools
       hashicorp_tools:
-        - name: packer
-          ensure: 0.12.0
-        - name: terraform
-          ensure: latest
-        - name: nomad
-          ensure: absent
-        - name: consul
-          ensure: present
+        packer:
+          state: 0.12.0
+        terraform:
+          state: latest
+        nomad:
+          state: absent
+        consul:
+          state: present
 ```
 
 Minimal example which basically remove all HashiCorp open source DevOps tools:
