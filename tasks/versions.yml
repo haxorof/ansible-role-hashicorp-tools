@@ -1,0 +1,107 @@
+- name: Determine Hashicorp tools end state
+  set_fact:
+    hashicorp_tools_combined: "{{ hashicorp_tools_defaults | combine(hashicorp_tools) }}"
+  when: hashicorp_tools is defined
+
+- name: Set Hashicorp tools end state to default
+  set_fact:
+    hashicorp_tools_combined: "{{ hashicorp_tools_defaults }}"
+  when: hashicorp_tools is not defined
+
+# - name: Reset all available versions
+#   set_fact:
+#     hashicorp_tools_combined: '{{hashicorp_tools_combined | combine({ item: { "available_version": "" } }, recursive=True) }}'
+#   with_items: 
+#     - "{{hashicorp_tools_combined.keys()}}"
+
+- name: Reset all actions
+  set_fact:
+    hashicorp_tools_combined: '{{hashicorp_tools_combined | combine({ item: { "action": "none" } }, recursive=True) }}'
+  with_items: 
+    - "{{hashicorp_tools_combined.keys()}}"
+
+- name: Find installed tools
+  find:
+    paths: "{{ hashicorp.install_dir }}/{{item.key}}"
+    file_type: directory
+  with_dict: "{{hashicorp_tools_combined}}"    
+  register: installed_tools
+
+- name: Set regex pattern for tools version in path
+  set_fact: hashicorp_path_pattern="^.+/(\d+\.\d+\.\d+)$"
+
+- name: Set version fact for installed Hashicorp tools
+  set_fact:
+    hashicorp_tools_combined: "{{hashicorp_tools_combined | combine({ item.item.key: { \"installed_version\": item.files.0.path | regex_replace(hashicorp_path_pattern, '\\1') } }, recursive=True) }}"
+  when: item.files is defined and (item.files.0.path | match(hashicorp_path_pattern))
+  with_items: "{{installed_tools.results}}"
+
+- name: Lookup latest released versions
+  command: "{{ hashicorp.download_dir }}/fetch_hashicorp_versions.sh {{item.key}}"
+  register: fetch_versions_cmd
+  when: (item.value.state == "latest") or (item.value.state == "present")
+  with_dict: "{{hashicorp_tools_combined}}"
+  changed_when: False
+
+- name: Set available version for Hashicorp tools
+  set_fact:
+    hashicorp_tools_combined: '{{hashicorp_tools_combined | combine({ item.item.key: { "available_version": item.stdout_lines[0] } }, recursive=True) }}'
+  when: item.stdout_lines is defined
+  with_items: 
+    - "{{fetch_versions_cmd.results}}"
+
+
+- name: Set version for specified state
+  set_fact:
+    hashicorp_tools_combined: '{{hashicorp_tools_combined | combine({ item.key: { "version": item.value.state } }, recursive=True) }}'
+  when:
+    item.value.state | match('\d+\.\d+\.\d+')
+  with_dict: "{{hashicorp_tools_combined}}"
+  changed_when: False
+
+- name: Set version for latest and present state
+  set_fact:
+    hashicorp_tools_combined: '{{hashicorp_tools_combined | combine({ item.key: { "version": item.value.available_version } }, recursive=True) }}'
+  when:
+    (
+      (item.value.available_version is defined and item.value.installed_version is not defined) or
+      (item.value.available_version is defined and 
+       item.value.installed_version is defined and
+       item.value.available_version != item.value.installed_version and 
+       item.value.state == "latest")
+    ) and
+    (item.value.state != "absent")
+  with_dict: "{{hashicorp_tools_combined}}"
+  changed_when: False
+
+
+- name: Set install action for Hashicorp tools
+  set_fact:
+    hashicorp_tools_combined: '{{hashicorp_tools_combined | combine({ item.key: { "action": "install" } }, recursive=True) }}'
+  when:
+    (item.value.version is defined and item.value.installed_version is not defined) and
+    (item.value.state != "absent")
+  with_dict: "{{hashicorp_tools_combined}}"
+  changed_when: False
+
+- name: Set replace action for Hashicorp tools
+  set_fact:
+    hashicorp_tools_combined: '{{hashicorp_tools_combined | combine({ item.key: { "action": "replace" } }, recursive=True) }}'
+  when:
+     (item.value.available_version is defined and 
+      item.value.installed_version is defined and
+      item.value.available_version != item.value.installed_version and 
+      item.value.state == "latest") or
+    (item.value.installed_version is defined and
+      item.value.installed_version != item.value.version)      
+  with_dict: "{{hashicorp_tools_combined}}"
+  changed_when: False
+
+- name: Set remove action for Hashicorp tools
+  set_fact:
+    hashicorp_tools_combined: '{{hashicorp_tools_combined | combine({ item.key: { "action": "remove" } }, recursive=True) }}'
+  when: item.value.installed_version is defined and item.value.state == "absent"
+  with_dict: "{{hashicorp_tools_combined}}"
+  changed_when: False
+
+#- debug: msg="{{ hashicorp_tools_combined }}"

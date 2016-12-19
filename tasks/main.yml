@@ -1,95 +1,71 @@
 ---
 # tasks file
-- name: Architecture - linux_amd64
-  set_fact:
-    hashicorp_architecture:  linux_amd64
-  when: ansible_system == "Linux" and
-    ansible_architecture == "x86_64"
-
-- name: Architecture - linux_386
-  set_fact:
-    hashicorp_architecture: linux_386
-  when: ansible_system == "Linux" and
-    ansible_architecture == "i386"
-
-- name: Make sure unzip is available
-  package: >
-    name=unzip
-    state=present
+- include: env.yml
+- include: versions.yml
 
 - name: Ensure HashiCorp temporary directory exists
   file: >
     path={{ hashicorp.download_dir }}
     state=directory
     mode=0755
+  changed_when: False
+
+- name: Remove symbolic links to tools which have state absent
+  file:
+    path: "{{ hashicorp.system_bin_dir }}/{{ item.key }}"
+    state: "absent"
+  become: yes
+  when: item.value.action == "remove" or item.value.action == "replace"
+  with_dict: "{{hashicorp_tools_combined}}"
+
+- name: Ensure HashiCorp tools with state absent is remove
+  file: >
+    dest="{{ hashicorp.install_dir }}/{{item.key}}/{{item.value.installed_version}}"
+    state=absent
+  when: item.value.action == "remove" or item.value.action == "replace"
+  with_dict: "{{hashicorp_tools_combined}}"    
 
 - name: Downloads Packages
   get_url:
-    url: "{{ hashicorp.releases_location }}/{{ item.0.name }}/{{ item.0.version }}/{{ item.0.name }}_{{ item.0.version }}_{{ item.1.architecture }}.zip"
-    checksum: "{{ item.1.checksum }}"
+    url: "{{ hashicorp.releases_location }}/{{item.key}}/{{item.value.version}}/{{item.key}}_{{item.value.version}}_{{hashicorp_architecture}}.zip"
+#    checksum: "{{ item.value.checksum }}"
     dest: "{{ hashicorp.download_dir }}"
     mode: 0755
     validate_certs: no
-  become: yes
-  when: item.0.name in "{{ hashicorp_tools }}" and item.1.architecture == hashicorp_architecture
-  with_subelements:
-    - "{{ hashicorp.releases }}"
-    - architectures
-
-- name: Ensure HashiCorp directory exists
-  file: >
-    path={{ hashicorp.install_dir }}
-    state=directory
-    mode=0755
-  become: yes
+  when: item.value.action == "install" or item.value.action == "replace"
+  with_dict: "{{hashicorp_tools_combined}}"
+  changed_when: False
 
 - name: Ensure HashiCorp tool directory exists
   file: >
-    path={{ hashicorp.install_dir }}/{{ item.0.name }}_{{ item.0.version }}/bin
+    path={{ hashicorp.install_dir }}/{{item.key}}/{{item.value.version}}/bin
     state=directory
     mode=0755
   become: yes
-  when: item.0.name in "{{ hashicorp_tools }}" and item.1.architecture == hashicorp_architecture
-  with_subelements:
-    - "{{ hashicorp.releases }}"
-    - architectures
+  when: item.value.action == "install" or item.value.action == "replace"
+  with_dict: "{{hashicorp_tools_combined}}"
 
-- name: Unpack Packages
+- name: Unpack download packages
   unarchive: >
-    src="{{ hashicorp.download_dir }}/{{ item.0.name }}_{{ item.0.version }}_{{ item.1.architecture }}.zip"
-    dest="{{ hashicorp.install_dir }}/{{ item.0.name }}_{{ item.0.version }}/bin"
+    src="{{ hashicorp.download_dir }}/{{item.key}}_{{item.value.version}}_{{hashicorp_architecture}}.zip"
+    dest="{{ hashicorp.install_dir }}/{{item.key}}/{{item.value.version}}/bin"
     copy=no
     mode=0755
     owner="{{ hashicorp.system_user }}"
     group="{{ hashicorp.system_group }}"
     creates=yes
   become: yes
-  when: item.0.name in "{{ hashicorp_tools }}" and item.1.architecture == hashicorp_architecture
-  with_subelements:
-    - "{{ hashicorp.releases }}"
-    - architectures
+  when: item.value.action == "install" or item.value.action == "replace"
+  with_dict: "{{hashicorp_tools_combined}}"
 
-- name: Removes symbolic links to packages
-  file:
-    path: "{{ hashicorp.system_bin_dir }}/{{ item.name }}"
-    state: "absent"
-  become: yes
-  when: item.name in "{{ hashicorp_tools }}"
-  with_items:
-    - "{{ hashicorp.releases }}"
-
-- name: Creates symbolic links to packages
+- name: Creates symbolic links to Hashicorp tools
   file: >
-    src={{ hashicorp.install_dir }}/{{ item.0.name }}_{{ item.0.version }}/bin/{{ item.0.name }}
-    dest={{ hashicorp.system_bin_dir }}/{{ item.0.name }}
+    src={{ hashicorp.install_dir }}/{{item.key}}/{{item.value.version}}/bin/{{item.key}}
+    dest={{ hashicorp.system_bin_dir }}/{{item.key}}
     state=link
   become: yes
-  when: item.0.name in "{{ hashicorp_tools }}" and item.1.architecture == hashicorp_architecture
-  with_subelements:
-    - "{{ hashicorp.releases }}"
-    - architectures
+  when: item.value.action == "install" or item.value.action == "replace"
+  with_dict: "{{hashicorp_tools_combined}}"
 
-- name: Ensure HashiCorp temporary directory is absent
-  file: >
-    dest="{{ hashicorp.download_dir }}"
-    state=absent
+
+- include: cleanup.yml

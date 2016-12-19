@@ -1,0 +1,8 @@
+# Expected result: If packer shall be removed if its installed, otherwise no action shall be taken.
+---
+- hosts: localhost
+  roles:
+    - role: role-under-test
+      hashicorp_tools:
+        packer:
+          state: absent
