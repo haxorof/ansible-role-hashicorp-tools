@@ -1,5 +1,7 @@
 # ansible-role-hashicorp-tools
 
+[![Build Status](https://travis-ci.org/haxorof/ansible-role-hashicorp-tools.svg?branch=master)](https://travis-ci.org/haxorof/ansible-role-hashicorp-tools)
+
 Installs HashiCorp's open source DevOps Tool Suite.
 
 Ansible Role: `haxorof.hashicorp-tools`
