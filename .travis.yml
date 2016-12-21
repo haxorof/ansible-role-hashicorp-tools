@@ -1,0 +1,36 @@
+---
+sudo: required
+
+services: docker
+
+env:
+  - distro: centos7
+    init: /usr/lib/systemd/systemd
+    run_opts: "--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro"
+
+before_install:
+  # Pull container.
+  - 'docker pull ansible/${distro}-ansible:stable'
+
+script:
+  - container_id=$(mktemp)
+  # Run container in detached state.
+  - 'docker run --detach --volume="${PWD}":/etc/ansible/roles/role-under-test:ro ${run_opts} ansible/${distro}-ansible:stable "${init}" > "${container_id}"'
+
+  # Ansible syntax check.
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook -c local -i /etc/ansible/roles/role-under-test/test/inventory /etc/ansible/roles/role-under-test/test/test-all-states.yml --syntax-check'
+
+  # Test role.
+  - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook -c local -i /etc/ansible/roles/role-under-test/test/inventory /etc/ansible/roles/role-under-test/test/test-all-states.yml'
+
+  # Test role idempotence.
+  - idempotence=$(mktemp)
+  - docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook -c local -i /etc/ansible/roles/role-under-test/test/inventory /etc/ansible/roles/role-under-test/test/test-all-states.yml | tee -a ${idempotence}
+  - >
+    tail ${idempotence}
+    | grep -q 'changed=0.*failed=0'
+    && (echo 'Succeeded!' && exit 0)
+    || (echo 'Failed!' && exit 1)
+
+notifications:
+    webhooks: https://galaxy.ansible.com/api/v1/notifications/

@@ -1,0 +1,13 @@
+---
+- hosts: localhost
+  roles:
+    - role: role-under-test
+      hashicorp_tools:
+        packer:
+          state: latest
+        terraform:
+          state: present
+        vault:
+          state: 0.6.4
+        consul:
+          state: absent

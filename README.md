@@ -2,11 +2,14 @@
 
 Installs HashiCorp's open source DevOps Tool Suite.
 
-## Environment
+Ansible Role: `haxorof.hashicorp-tools`
 
-* Ansible 2.x
+## Requirements
 
-## Usage
+* Ansible 2.x or later
+* Internet connectivity to `releases.hashicorp.com`
+
+## Example Playbook
 
 Example how to write to install and remove HashiCorp open source DevOps tools:
 
