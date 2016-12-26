@@ -77,3 +77,7 @@ To later destroy it just execute the following command:
 ```bash
 vagrant destroy
 ```
+
+## License
+
+Thisa is an open source project under the [MIT](https://github.com/haxorof/ansible-role-hashicorp-tools/blob/master/LICENSE) license.
