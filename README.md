@@ -4,12 +4,25 @@
 
 Installs HashiCorp's open source DevOps Tool Suite.
 
-Ansible Role: `haxorof.hashicorp-tools`
-
 ## Requirements
 
 * Ansible 2.x or later
 * Internet connectivity to `releases.hashicorp.com`
+
+## Ansible Galaxy
+
+[Ansible Galaxy](http://docs.ansible.com/ansible/galaxy.html#installing-multiple-roles-from-a-file) `requirements.yml` file:
+
+```yaml
+# from galaxy
+- src: haxorof.hashicorp-tools
+```
+
+To install the role specificed in the file:
+
+```bash
+ansible-galaxy install -r requirements.yml
+```
 
 ## Example Playbook
 
@@ -19,7 +32,7 @@ Example how to write to install and remove HashiCorp open source DevOps tools:
 ---
 - hosts: localhost
   roles:
-    - role: ansible-role-hashicorp-tools
+    - role: haxorof.hashicorp-tools
       hashicorp_tools:
         packer:
           state: 0.12.0
@@ -37,7 +50,7 @@ Minimal example which basically remove all HashiCorp open source DevOps tools:
 ---
 - hosts: localhost
   roles:
-    - role: ansible-role-hashicorp-tools
+    - role: haxorof.hashicorp-tools
 ```
 
 ## Contribute
@@ -58,3 +71,9 @@ vagrant up
 ```
 
 If the execution fails the Vagrant provisioning step will fail.
+
+To later destroy it just execute the following command:
+
+```bash
+vagrant destroy
+```
