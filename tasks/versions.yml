@@ -8,12 +8,6 @@
     hashicorp_tools_combined: "{{ hashicorp_tools_defaults }}"
   when: hashicorp_tools is not defined
 
-# - name: Reset all available versions
-#   set_fact:
-#     hashicorp_tools_combined: '{{hashicorp_tools_combined | combine({ item: { "available_version": "" } }, recursive=True) }}'
-#   with_items: 
-#     - "{{hashicorp_tools_combined.keys()}}"
-
 - name: Reset all actions
   set_fact:
     hashicorp_tools_combined: '{{hashicorp_tools_combined | combine({ item: { "action": "none" } }, recursive=True) }}'
