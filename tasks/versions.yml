@@ -16,7 +16,7 @@
 
 - name: Find installed tools
   find:
-    paths: "{{ hashicorp.install_dir }}/{{item.key}}"
+    paths: "{{ hashicorp_install_dir }}/{{item.key}}"
     file_type: directory
   with_dict: "{{hashicorp_tools_combined}}"    
   register: installed_tools
@@ -31,7 +31,7 @@
   with_items: "{{installed_tools.results}}"
 
 - name: Lookup latest released versions
-  command: "{{ hashicorp.download_dir }}/fetch_hashicorp_versions.sh {{item.key}}"
+  command: "{{ hashicorp_download_dir }}/fetch_hashicorp_versions.sh {{item.key}}"
   register: fetch_versions_cmd
   when: (item.value.state == "latest") or (item.value.state == "present")
   with_dict: "{{hashicorp_tools_combined}}"
