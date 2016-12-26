@@ -18,9 +18,9 @@ galaxy_info:
     - wheezy
   - name: Ubuntu
     versions:
-    - Precise
-    - Trusty
-    - Xenial 
+    - precise
+    - trusty
+    - xenial 
   categories:
   - system
   - devops
