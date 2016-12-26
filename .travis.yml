@@ -23,7 +23,7 @@ script:
   - 'docker run --detach --volume="${PWD}":/etc/ansible/roles/role-under-test:ro --privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro williamyeh/ansible:${distro} env TERM=xterm python /etc/ansible/roles/role-under-test/tests/trap.py > "${container_id}"'
 
   # Special case for alpine3 for apk to download packages
-  - 'if [[ "${distro}" == "alpine3" ]] ; then  docker exec --tty "$(cat ${container_id})" env TERM=xterm apk update ; fi'
+  - 'if [ "${distro}" == "alpine3" ]; then docker exec --tty "$(cat ${container_id})" env TERM=xterm apk update; fi'
 
   # Ansible syntax check.
   - 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook -c local -i /etc/ansible/roles/role-under-test/tests/inventory /etc/ansible/roles/role-under-test/tests/test.yml --syntax-check'
