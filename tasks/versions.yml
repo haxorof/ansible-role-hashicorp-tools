@@ -31,8 +31,8 @@
   with_items: "{{installed_tools.results}}"
 
 - name: Lookup latest released versions
-  command: "{{ hashicorp_download_dir }}/fetch_hashicorp_versions.sh {{item.key}}"
-  register: fetch_versions_cmd
+  command: "{{ hashicorp_download_dir }}/hashicorp_available_versions.py --url {{hashicorp_releases_location}} --tool {{item.key}}"
+  register: available_versions_cmd
   when: (item.value.state == "latest") or (item.value.state == "present")
   with_dict: "{{hashicorp_tools_combined}}"
   changed_when: False
@@ -42,7 +42,7 @@
     hashicorp_tools_combined: '{{hashicorp_tools_combined | combine({ item.item.key: { "available_version": item.stdout_lines[0] } }, recursive=True) }}'
   when: item.stdout_lines is defined
   with_items: 
-    - "{{fetch_versions_cmd.results}}"
+    - "{{available_versions_cmd.results}}"
 
 
 - name: Set version for specified state

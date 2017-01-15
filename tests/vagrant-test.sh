@@ -22,15 +22,15 @@ do
     RESULT+=$?
 
     # Ansible syntax check.
-    docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook -c local -i /etc/ansible/roles/role-under-test/tests/inventory /etc/ansible/roles/role-under-test/tests/test.yml --syntax-check
+    docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook -vvv -c local -i /etc/ansible/roles/role-under-test/tests/inventory /etc/ansible/roles/role-under-test/tests/test.yml --syntax-check
     RESULT+=$?
 
     # Test role.
-    docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook -c local -i /etc/ansible/roles/role-under-test/tests/inventory /etc/ansible/roles/role-under-test/tests/test.yml
+    docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook -vvv -c local -i /etc/ansible/roles/role-under-test/tests/inventory /etc/ansible/roles/role-under-test/tests/test.yml
     RESULT+=$?
 
     # Test role idempotence.
-    docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook -c local -i /etc/ansible/roles/role-under-test/tests/inventory /etc/ansible/roles/role-under-test/tests/test.yml
+    docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook -vvv -c local -i /etc/ansible/roles/role-under-test/tests/inventory /etc/ansible/roles/role-under-test/tests/test.yml
     RESULT+=$?
 
     # Cleanup
