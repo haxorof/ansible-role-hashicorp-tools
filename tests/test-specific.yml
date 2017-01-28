@@ -1,8 +1,0 @@
-# Expected result: Only packer 0.12.0 shall be installed
----
-- hosts: localhost
-  roles:
-    - role: role-under-test
-      hashicorp_tools:
-        packer:
-          state: 0.12.0

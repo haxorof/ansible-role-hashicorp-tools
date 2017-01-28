@@ -1,5 +1,0 @@
-# Expected result: All Hashicorp tools shall be removed
----
-- hosts: localhost
-  roles:
-    - role: role-under-test

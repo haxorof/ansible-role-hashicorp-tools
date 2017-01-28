@@ -1,8 +1,0 @@
-# Expected result: If packer is installed no action shall be taken, otherwise latest version shall be installed.
----
-- hosts: localhost
-  roles:
-    - role: role-under-test
-      hashicorp_tools:
-        packer:
-          state: present

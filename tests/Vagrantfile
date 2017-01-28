@@ -22,6 +22,8 @@ Vagrant.configure(2) do |config|
   config.vm.define "test" do |node|
     node.vm.box = "andrewhk/centos72-docker"
     node.vm.synced_folder "..", "/etc/ansible/roles/role-under-test"
-    node.vm.provision "shell", path: "vagrant-test.sh"
+    config.vm.provision "shell", run: "once" do |s|
+      s.path = "vagrant-test.sh"
+    end
   end
 end

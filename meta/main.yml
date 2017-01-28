@@ -26,5 +26,11 @@ galaxy_info:
   - devops
   - provision
   - deployment
+  - consul
+  - packer
+  - nomad
+  - vault
+  - terraform
+  - hashicorp
 
 dependencies: []
