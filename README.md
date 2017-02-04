@@ -42,18 +42,6 @@ hashicorp_system_bin_dir: /usr/local/bin
 hashicorp_system_user: "{{ ansible_user_id }}"
 # Which system group.
 hashicorp_system_group: "{{ ansible_user_id }}"
-# HashiCorp tools dictionary.
-hashicorp_tools_defaults:
-  packer:
-    state: absent
-  terraform:
-    state: absent
-  vault:
-    state: absent
-  nomad:
-    state: absent
-  consul:
-    state: absent
 ```
 
 ## Example Playbook

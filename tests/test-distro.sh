@@ -5,7 +5,7 @@
 ################################################################################
 distro=$1
 test_case=$2
-skip_idempotence=$3
+skip_test_idempotence=$3
 if [[ "$distro" == "" ]]; then
     echo "Distribution not defined!"
     exit 1
@@ -15,23 +15,24 @@ if [[ "$test_case" == "" ]]; then
     test_case=test.yml
 fi
 
-if [[ "$skip_idempotence" != "1" ]]; then
+if [[ "$skip_test_idempotence" == "1" ]]; then
+    skip_idempotence=1
+else
     skip_idempotence=0
 fi
 
-#ansible_opts="-vvv"
-ansible_opts=""
+echo "Distribution under test: ${distro}"
+
+ansible_opts="$ANSIBLE_OPTS"
 run_opts="--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro"
 container_id_file=$(mktemp)
 init="env TERM=xterm python /etc/ansible/roles/role-under-test/tests/trap.py"
 
-# Special for Vagrant to avoid problems with shared directories etc
 if [[ -d "/vagrant" ]]; then
     sudo systemctl restart docker
     cd /etc/ansible/roles/role-under-test
 fi
 
-echo "Distribution under test: ${distro}"
 RESULT=0
 # Run container in detached state.
 docker run --detach --volume="${PWD}":/etc/ansible/roles/role-under-test:ro ${run_opts} williamyeh/ansible:${distro} ${init} > "${container_id_file}"
@@ -47,21 +48,26 @@ if [[ -n "${container_id}" ]]; then
         RESULT+=$?
     fi
 
-    # Ansible syntax check.
+    echo "--> Ansible version"
+    docker exec --tty ${container_id} env TERM=xterm ansible --version
+
+    echo "--> Ansible syntax check"
     docker exec --tty ${container_id} env TERM=xterm ansible-playbook $ansible_opts -c local -i /etc/ansible/roles/role-under-test/tests/inventory /etc/ansible/roles/role-under-test/tests/$test_case --syntax-check
     RESULT+=$?
 
-    # Test role.
-    docker exec --tty ${container_id} env TERM=xterm ansible-playbook $ansible_opts -c local -i /etc/ansible/roles/role-under-test/tests/inventory /etc/ansible/roles/role-under-test/tests/$test_case
-    RESULT+=$?
-
-    if [[ "$skip_idempotence" == "1" ]]; then
-        # Test role idempotence.
+    if [[ $RESULT -eq 0 ]]; then
+        echo "--> Test role"
         docker exec --tty ${container_id} env TERM=xterm ansible-playbook $ansible_opts -c local -i /etc/ansible/roles/role-under-test/tests/inventory /etc/ansible/roles/role-under-test/tests/$test_case
         RESULT+=$?
+
+        if [[ $skip_idempotence -eq 0 ]]; then
+            echo "--> Test role idempotence"
+            docker exec --tty ${container_id} env TERM=xterm ansible-playbook $ansible_opts -c local -i /etc/ansible/roles/role-under-test/tests/inventory /etc/ansible/roles/role-under-test/tests/$test_case
+            RESULT+=$?
+        fi
     fi
 
-    # Cleanup
+    echo "--> Cleanup"
     docker stop ${container_id} > /dev/null
     docker rm -v ${container_id} > /dev/null
 else

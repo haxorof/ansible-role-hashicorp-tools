@@ -1,24 +1,13 @@
-- name: Determine Hashicorp tools end state
+---
+- name: Set work variable
   set_fact:
-    hashicorp_tools_combined: "{{ hashicorp_tools_defaults | combine(hashicorp_tools) }}"
-  when: hashicorp_tools is defined
-
-- name: Set Hashicorp tools end state to default
-  set_fact:
-    hashicorp_tools_combined: "{{ hashicorp_tools_defaults }}"
-  when: hashicorp_tools is not defined
-
-- name: Reset all actions
-  set_fact:
-    hashicorp_tools_combined: '{{hashicorp_tools_combined | combine({ item: { "action": "none" } }, recursive=True) }}'
-  with_items: 
-    - "{{hashicorp_tools_combined.keys()}}"
+    hashicorp_tools_work: "{{ hashicorp_tools|default({}) }}"
 
 - name: Find installed tools
   find:
     paths: "{{ hashicorp_install_dir }}/{{item.key}}"
     file_type: directory
-  with_dict: "{{hashicorp_tools_combined}}"    
+  with_dict: "{{hashicorp_tools_work}}"
   register: installed_tools
 
 - name: Set regex pattern for tools version in path
@@ -26,7 +15,7 @@
 
 - name: Set version fact for installed Hashicorp tools
   set_fact:
-    hashicorp_tools_combined: "{{hashicorp_tools_combined | combine({ item.item.key: { \"installed_version\": item.files.0.path | regex_replace(hashicorp_path_pattern, '\\1') } }, recursive=True) }}"
+    hashicorp_tools_work: "{{hashicorp_tools_work | combine({ item.item.key: { \"installed_version\": item.files.0.path | regex_replace(hashicorp_path_pattern, '\\1') } }, recursive=True) }}"
   when: item.files is defined and (item.files.0.path | match(hashicorp_path_pattern))
   with_items: "{{installed_tools.results}}"
 
@@ -34,68 +23,72 @@
   command: "{{ hashicorp_download_dir }}/hashicorp_available_versions.py --url {{hashicorp_releases_location}} --tool {{item.key}}"
   register: available_versions_cmd
   when: (item.value.state == "latest") or (item.value.state == "present")
-  with_dict: "{{hashicorp_tools_combined}}"
+  with_dict: "{{hashicorp_tools_work}}"
   changed_when: False
 
 - name: Set available version for Hashicorp tools
   set_fact:
-    hashicorp_tools_combined: '{{hashicorp_tools_combined | combine({ item.item.key: { "available_version": item.stdout_lines[0] } }, recursive=True) }}'
+    hashicorp_tools_work: '{{hashicorp_tools_work | combine({ item.item.key: { "available_version": item.stdout_lines[0] } }, recursive=True) }}'
   when: item.stdout_lines is defined
-  with_items: 
+  with_items:
     - "{{available_versions_cmd.results}}"
 
 
 - name: Set version for specified state
   set_fact:
-    hashicorp_tools_combined: '{{hashicorp_tools_combined | combine({ item.key: { "version": item.value.state } }, recursive=True) }}'
+    hashicorp_tools_work: '{{hashicorp_tools_work | combine({ item.key: { "version": item.value.state } }, recursive=True) }}'
   when:
     item.value.state | match('\d+\.\d+\.\d+')
-  with_dict: "{{hashicorp_tools_combined}}"
+  with_dict: "{{hashicorp_tools_work}}"
   changed_when: False
 
 - name: Set version for latest and present state
   set_fact:
-    hashicorp_tools_combined: '{{hashicorp_tools_combined | combine({ item.key: { "version": item.value.available_version } }, recursive=True) }}'
+    hashicorp_tools_work: '{{hashicorp_tools_work | combine({ item.key: { "version": item.value.available_version } }, recursive=True) }}'
   when:
     (
       (item.value.available_version is defined and item.value.installed_version is not defined) or
-      (item.value.available_version is defined and 
+      (item.value.available_version is defined and
        item.value.installed_version is defined and
-       item.value.available_version != item.value.installed_version and 
+       item.value.available_version != item.value.installed_version and
        item.value.state == "latest")
     ) and
     (item.value.state != "absent")
-  with_dict: "{{hashicorp_tools_combined}}"
+  with_dict: "{{hashicorp_tools_work}}"
   changed_when: False
 
 
 - name: Set install action for Hashicorp tools
   set_fact:
-    hashicorp_tools_combined: '{{hashicorp_tools_combined | combine({ item.key: { "action": "install" } }, recursive=True) }}'
+    hashicorp_tools_work: '{{hashicorp_tools_work | combine({ item.key: { "action": "install" } }, recursive=True) }}'
   when:
     (item.value.version is defined and item.value.installed_version is not defined) and
     (item.value.state != "absent")
-  with_dict: "{{hashicorp_tools_combined}}"
+  with_dict: "{{hashicorp_tools_work}}"
   changed_when: False
 
 - name: Set replace action for Hashicorp tools
   set_fact:
-    hashicorp_tools_combined: '{{hashicorp_tools_combined | combine({ item.key: { "action": "replace" } }, recursive=True) }}'
+    hashicorp_tools_work: '{{hashicorp_tools_work | combine({ item.key: { "action": "replace" } }, recursive=True) }}'
   when:
-     (item.value.available_version is defined and 
+     (item.value.available_version is defined and
       item.value.installed_version is defined and
-      item.value.available_version != item.value.installed_version and 
+      item.value.available_version != item.value.installed_version and
       item.value.state == "latest") or
     (item.value.installed_version is defined and
-      item.value.installed_version != item.value.version)      
-  with_dict: "{{hashicorp_tools_combined}}"
+      item.value.installed_version != item.value.version)
+  with_dict: "{{hashicorp_tools_work}}"
   changed_when: False
 
 - name: Set remove action for Hashicorp tools
   set_fact:
-    hashicorp_tools_combined: '{{hashicorp_tools_combined | combine({ item.key: { "action": "remove" } }, recursive=True) }}'
+    hashicorp_tools_work: '{{hashicorp_tools_work | combine({ item.key: { "action": "remove" } }, recursive=True) }}'
   when: item.value.installed_version is defined and item.value.state == "absent"
-  with_dict: "{{hashicorp_tools_combined}}"
+  with_dict: "{{hashicorp_tools_work}}"
   changed_when: False
 
-#- debug: msg="{{ hashicorp_tools_combined }}"
+- name: Action to none for tools no action is required
+  set_fact:
+    hashicorp_tools_work: '{{hashicorp_tools_work | combine({ item.key: { "action": "none" } }, recursive=True) }}'
+  when: item.value.action is not defined
+  with_dict: "{{hashicorp_tools_work}}"
