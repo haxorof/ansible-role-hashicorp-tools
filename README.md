@@ -1,5 +1,6 @@
 # ansible-role-hashicorp-tools
 
+[![GitHub version](https://badge.fury.io/gh/haxorof%2Fansible-role-hashicorp-tools.svg)](https://badge.fury.io/gh/haxorof%2Fansible-role-hashicorp-tools)
 [![Build Status](https://travis-ci.org/haxorof/ansible-role-hashicorp-tools.svg?branch=master)](https://travis-ci.org/haxorof/ansible-role-hashicorp-tools)
 
 Installs HashiCorp's open source DevOps Tool Suite.
@@ -27,6 +28,17 @@ ansible-galaxy install -r requirements.yml
 ## Role Variables
 
 Available variables are listed below, along with default values:
+
+Variables:
+
+```yaml
+# HashiCorp tools to be affected by this role.
+hashicorp_tools:
+  <tool-name>:
+    state: (<version>, present, latest, absent)
+```
+
+Default variables:
 
 ```yaml
 # Release location base URL. Example of final URL:
@@ -90,7 +102,11 @@ To test this project go into the `test` directory and execute the following comm
 vagrant up
 ```
 
-If the execution fails the Vagrant provisioning step will fail.
+If the execution fails the Vagrant provisioning step will fail. To re-run the tests you can execute the provisioning step again.
+
+```bash
+vagrant provision
+```
 
 To later destroy it just execute the following command:
 
