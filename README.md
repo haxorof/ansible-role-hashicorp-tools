@@ -60,6 +60,8 @@ hashicorp_bin_dir: /opt/bin
 hashicorp_system_user: "{{ ansible_user_id }}"
 # Which system group.
 hashicorp_system_group: "{{ ansible_user_id }}"
+# Tool name suffix
+hashicorp_tool_suffix: ".io"
 ```
 
 ## Example Playbook

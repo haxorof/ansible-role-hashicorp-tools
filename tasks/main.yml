@@ -4,7 +4,7 @@
 
 - name: "Remove symbolic links to tools which have state absent"
   file:
-    path: "{{ hashicorp_bin_dir }}/{{ item.key }}"
+    path: "{{ hashicorp_bin_dir }}/{{ item.key }}{{ hashicorp_tool_suffix }}"
     state: "absent"
   become: yes
   when: item.value.action == "remove" or item.value.action == "replace"
@@ -14,6 +14,7 @@
   file:
     dest: "{{ hashicorp_install_dir }}/hashicorp-{{item.key}}/{{item.value.installed_version}}"
     state: absent
+  become: yes
   when: item.value.action == "remove" or item.value.action == "replace"
   with_dict: "{{hashicorp_tools_work}}"
 
@@ -52,7 +53,7 @@
 - name: Creates symbolic links to Hashicorp tools
   file:
     src: "{{ hashicorp_install_dir }}/hashicorp-{{item.key}}/{{item.value.version}}/bin/{{item.key}}"
-    dest: "{{ hashicorp_bin_dir }}/{{item.key}}"
+    dest: "{{ hashicorp_bin_dir }}/{{item.key}}{{ hashicorp_tool_suffix }}"
     state: link
   become: yes
   when: item.value.action == "install" or item.value.action == "replace"

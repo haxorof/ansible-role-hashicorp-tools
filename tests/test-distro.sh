@@ -12,7 +12,7 @@ if [[ "$distro" == "" ]]; then
 fi
 
 if [[ "$test_case" == "" ]]; then
-    test_case=test.yml
+    test_case=test1
 fi
 
 if [[ "$skip_test_idempotence" == "1" ]]; then
@@ -21,7 +21,7 @@ else
     skip_idempotence=0
 fi
 
-echo "Distribution under test: ${distro}"
+echo "[$test_case] Distribution under test: ${distro}"
 
 ansible_opts="$ANSIBLE_OPTS"
 run_opts="--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro"
@@ -41,37 +41,41 @@ RESULT+=$?
 container_id="$(cat ${container_id_file})"
 
 if [[ -n "${container_id}" ]]; then
-    echo "Docker container ID: ${container_id}"
+    echo "[$test_case] Docker container ID: ${container_id}"
 
     if [[ "$distro" == "alpine3" ]]; then
         docker exec --tty ${container_id} env TERM=xterm apk update
         RESULT+=$?
     fi
 
-    echo "--> Ansible version"
+    echo "[$test_case] Ansible version"
     docker exec --tty ${container_id} env TERM=xterm ansible --version
 
-    echo "--> Ansible syntax check"
-    docker exec --tty ${container_id} env TERM=xterm ansible-playbook $ansible_opts -c local -i /etc/ansible/roles/role-under-test/tests/inventory /etc/ansible/roles/role-under-test/tests/$test_case --syntax-check
+    echo "[$test_case] Ansible syntax check"
+    docker exec --tty ${container_id} env TERM=xterm ansible-playbook $ansible_opts -c local -i /etc/ansible/roles/role-under-test/tests/inventory /etc/ansible/roles/role-under-test/tests/$test_case/test.yml --syntax-check
     RESULT+=$?
 
     if [[ $RESULT -eq 0 ]]; then
-        echo "--> Test role"
-        docker exec --tty ${container_id} env TERM=xterm ansible-playbook $ansible_opts -c local -i /etc/ansible/roles/role-under-test/tests/inventory /etc/ansible/roles/role-under-test/tests/$test_case
+        echo "[$test_case] Test"
+        docker exec --tty ${container_id} env TERM=xterm ansible-playbook $ansible_opts -c local -i /etc/ansible/roles/role-under-test/tests/inventory /etc/ansible/roles/role-under-test/tests/$test_case/test.yml
+        RESULT+=$?
+
+        echo "[$test_case] Verify"
+        docker exec --tty ${container_id} env TERM=xterm sh /etc/ansible/roles/role-under-test/tests/$test_case/verify.sh
         RESULT+=$?
 
         if [[ $skip_idempotence -eq 0 ]]; then
-            echo "--> Test role idempotence"
-            docker exec --tty ${container_id} env TERM=xterm ansible-playbook $ansible_opts -c local -i /etc/ansible/roles/role-under-test/tests/inventory /etc/ansible/roles/role-under-test/tests/$test_case
+            echo "[$test_case] Test idempotence"
+            docker exec --tty ${container_id} env TERM=xterm ansible-playbook $ansible_opts -c local -i /etc/ansible/roles/role-under-test/tests/inventory /etc/ansible/roles/role-under-test/tests/$test_case/test.yml
             RESULT+=$?
         fi
     fi
 
-    echo "--> Cleanup"
+    echo "[$test_case] Cleanup"
     docker stop ${container_id} > /dev/null
     docker rm -v ${container_id} > /dev/null
 else
-    echo "Docker container was did not start correctly!"
+    echo "[$test_case] Docker container was did not start correctly!"
     RESULT=1
 fi
 
