@@ -5,9 +5,15 @@
 
 Installs HashiCorp's open source DevOps Tool Suite.
 
+## Features
+
+* Easy install of HashiCorp's open source DevOps Tool Suite.
+* Installs tools in accordans with [Filesystem Hierarchy Standard](http://www.pathname.com/fhs/)
+* Add tools to system path for easier access
+
 ## Requirements
 
-* Ansible 2.x or later
+* Ansible 2.1 or later
 * Internet connectivity to `releases.hashicorp.com`
 
 ## Ansible Galaxy
@@ -27,9 +33,7 @@ ansible-galaxy install -r requirements.yml
 
 ## Role Variables
 
-Available variables are listed below, along with default values:
-
-Variables:
+Main variable structure listed below:
 
 ```yaml
 # HashiCorp tools to be affected by this role.
@@ -44,12 +48,14 @@ Default variables:
 # Release location base URL. Example of final URL:
 # https://releases.hashicorp.com/packer/0.12.0/packer_0.12.0_linux_amd64.zip
 hashicorp_releases_location: https://releases.hashicorp.com
-# Where download files shall be put.
-hashicorp_download_dir: /var/tmp/hashicorp
+# System tmp directory.
+hashicorp_system_tmp_dir: /var/tmp
+# HashiCorp tmp directory
+hashicorp_tmp_dir: "{{ hashicorp_system_tmp_dir }}/hashicorp"
 # Where HashiCorp tools shall be installed under.
-hashicorp_install_dir: /opt/hashicorp
+hashicorp_install_dir: /opt
 # Where symbolic links shall be added.
-hashicorp_system_bin_dir: /usr/local/bin
+hashicorp_bin_dir: /opt/bin
 # Which system user.
 hashicorp_system_user: "{{ ansible_user_id }}"
 # Which system group.

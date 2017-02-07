@@ -1,6 +1,7 @@
 ---
 - name: Ensure HashiCorp temporary directory is absent
   file:
-    dest: "{{ hashicorp_download_dir }}"
+    dest: "{{ hashicorp_tmp_dir }}"
     state: absent
+  become: true
   changed_when: False

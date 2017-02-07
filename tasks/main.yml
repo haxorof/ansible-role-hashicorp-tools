@@ -2,16 +2,9 @@
 - include: env.yml
 - include: versions.yml
 
-- name: Ensure HashiCorp temporary directory exists
-  file:
-    path: "{{ hashicorp_download_dir }}"
-    state: directory
-    mode: 0755
-  changed_when: False
-
 - name: "Remove symbolic links to tools which have state absent"
   file:
-    path: "{{ hashicorp_system_bin_dir }}/{{ item.key }}"
+    path: "{{ hashicorp_bin_dir }}/{{ item.key }}"
     state: "absent"
   become: yes
   when: item.value.action == "remove" or item.value.action == "replace"
@@ -19,7 +12,7 @@
 
 - name: Ensure HashiCorp tools with state absent is remove
   file:
-    dest: "{{ hashicorp_install_dir }}/{{item.key}}/{{item.value.installed_version}}"
+    dest: "{{ hashicorp_install_dir }}/hashicorp-{{item.key}}/{{item.value.installed_version}}"
     state: absent
   when: item.value.action == "remove" or item.value.action == "replace"
   with_dict: "{{hashicorp_tools_work}}"
@@ -27,7 +20,7 @@
 - name: Downloads Packages
   get_url:
     url: "{{ hashicorp_releases_location }}/{{item.key}}/{{item.value.version}}/{{item.key}}_{{item.value.version}}_{{hashicorp_architecture}}.zip"
-    dest: "{{ hashicorp_download_dir }}"
+    dest: "{{ hashicorp_tmp_dir }}"
     mode: 0755
     validate_certs: no
   when: item.value.action == "install" or item.value.action == "replace"
@@ -36,7 +29,7 @@
 
 - name: Ensure HashiCorp tool directory exists
   file:
-    path: "{{ hashicorp_install_dir }}/{{item.key}}/{{item.value.version}}/bin"
+    path: "{{ hashicorp_install_dir }}/hashicorp-{{item.key}}/{{item.value.version}}/bin"
     state: directory
     mode: 0755
   become: yes
@@ -45,21 +38,21 @@
 
 - name: Unpack download packages
   unarchive:
-    src: "{{ hashicorp_download_dir }}/{{item.key}}_{{item.value.version}}_{{hashicorp_architecture}}.zip"
-    dest: "{{ hashicorp_install_dir }}/{{item.key}}/{{item.value.version}}/bin"
+    src: "{{ hashicorp_tmp_dir }}/{{item.key}}_{{item.value.version}}_{{hashicorp_architecture}}.zip"
+    dest: "{{ hashicorp_install_dir }}/hashicorp-{{item.key}}/{{item.value.version}}/bin"
     copy: no
     mode: 0755
     owner: "{{ hashicorp_system_user }}"
     group: "{{ hashicorp_system_group }}"
-    creates: "{{ hashicorp_install_dir }}/{{item.key}}/{{item.value.version}}/bin/{{item.key}}"
+    creates: "{{ hashicorp_install_dir }}/hashicorp-{{item.key}}/{{item.value.version}}/bin/{{item.key}}"
   become: yes
   when: item.value.action == "install" or item.value.action == "replace"
   with_dict: "{{hashicorp_tools_work}}"
 
 - name: Creates symbolic links to Hashicorp tools
   file:
-    src: "{{ hashicorp_install_dir }}/{{item.key}}/{{item.value.version}}/bin/{{item.key}}"
-    dest: "{{ hashicorp_system_bin_dir }}/{{item.key}}"
+    src: "{{ hashicorp_install_dir }}/hashicorp-{{item.key}}/{{item.value.version}}/bin/{{item.key}}"
+    dest: "{{ hashicorp_bin_dir }}/{{item.key}}"
     state: link
   become: yes
   when: item.value.action == "install" or item.value.action == "replace"
