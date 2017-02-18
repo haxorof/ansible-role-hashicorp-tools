@@ -13,7 +13,7 @@ VERSION = '0.1'
 class HashiCorpVersionParser(HTMLParser):
     """Parses HTML with anchors which contains the versions"""
     parse_version = False
-    version_pattern = re.compile('.+_([\\d\\.]+)')
+    version_pattern = re.compile('.+_(.+)')
     versions = []
 
     def handle_starttag(self, tag, attrs):
@@ -79,7 +79,11 @@ def main(parser):
             for version in versions:
                 sys.stdout.write(version + ' ')
         elif options.release == 'latest':
-            sys.stdout.write(versions[0])
+            for version in versions:
+                # To exclude beta and rc releases
+                if "-" not in version:
+                    sys.stdout.write(version)
+                    break
         else:
             for version in versions:
                 if version.startswith(options.release):

@@ -8,8 +8,17 @@ Installs HashiCorp's open source DevOps Tool Suite.
 ## Features
 
 * Easy install of HashiCorp's open source DevOps Tool Suite.
+  * Consul
+  * Nomad
+  * Packer
+  * Terraform
+  * Vault
 * Installs tools in accordans with [Filesystem Hierarchy Standard](http://www.pathname.com/fhs/)
+  * Binaries under /opt
+  * Configruation under /etc/opt
+  * Variable data under /var/opt
 * Add tools to system path for easier access
+  * Symbolic links under /opt/bin
 
 ## Requirements
 
