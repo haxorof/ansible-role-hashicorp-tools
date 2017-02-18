@@ -31,6 +31,26 @@ To install the role specificed in the file:
 ansible-galaxy install -r requirements.yml
 ```
 
+## Example Playbook
+
+Example how to write to install and remove HashiCorp open source DevOps tools:
+
+```yaml
+---
+- hosts: localhost
+  roles:
+    - role: haxorof.hashicorp-tools
+      hashicorp_tools:
+        packer:
+          state: 0.12.0
+        terraform:
+          state: latest
+        nomad:
+          state: absent
+        consul:
+          state: present
+```
+
 ## Role Variables
 
 Main variable structure listed below:
@@ -62,35 +82,6 @@ hashicorp_system_user: "{{ ansible_user_id }}"
 hashicorp_system_group: "{{ ansible_user_id }}"
 # Tool name suffix
 hashicorp_tool_suffix: ".io"
-```
-
-## Example Playbook
-
-Example how to write to install and remove HashiCorp open source DevOps tools:
-
-```yaml
----
-- hosts: localhost
-  roles:
-    - role: haxorof.hashicorp-tools
-      hashicorp_tools:
-        packer:
-          state: 0.12.0
-        terraform:
-          state: latest
-        nomad:
-          state: absent
-        consul:
-          state: present
-```
-
-Minimal example which basically remove all HashiCorp open source DevOps tools:
-
-```yaml
----
-- hosts: localhost
-  roles:
-    - role: haxorof.hashicorp-tools
 ```
 
 ## Contribute
