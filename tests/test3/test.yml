@@ -1,0 +1,11 @@
+---
+- hosts: localhost
+  roles:
+    - role: role-under-test
+      hashicorp_tools:
+        consul:
+          state: latest
+          config:
+            enable_service: true
+            agent_options: 
+              - "-dev"

@@ -1,0 +1,9 @@
+---
+- name: Determine if systemd is present in system
+  stat:
+    path: /etc/systemd
+  register: systemd_dir
+  changed_when: False
+
+- include: systemd.yml
+  when: systemd_dir.stat.exists

@@ -60,14 +60,16 @@ if [[ -n "${container_id}" ]]; then
         docker exec --tty ${container_id} env TERM=xterm ansible-playbook $ansible_opts -c local -i /etc/ansible/roles/role-under-test/tests/inventory /etc/ansible/roles/role-under-test/tests/$test_case/test.yml
         RESULT+=$?
 
-        echo "[$test_case] Verify"
-        docker exec --tty ${container_id} env TERM=xterm sh /etc/ansible/roles/role-under-test/tests/$test_case/verify.sh
-        RESULT+=$?
-
-        if [[ $skip_idempotence -eq 0 ]]; then
-            echo "[$test_case] Test idempotence"
-            docker exec --tty ${container_id} env TERM=xterm ansible-playbook $ansible_opts -c local -i /etc/ansible/roles/role-under-test/tests/inventory /etc/ansible/roles/role-under-test/tests/$test_case/test.yml
+        if [[ $RESULT -eq 0 ]]; then
+            echo "[$test_case] Verify"
+            docker exec --tty ${container_id} env TERM=xterm sh /etc/ansible/roles/role-under-test/tests/$test_case/verify.sh
             RESULT+=$?
+
+            if [[ $skip_idempotence -eq 0 ]]; then
+                echo "[$test_case] Test idempotence"
+                docker exec --tty ${container_id} env TERM=xterm ansible-playbook $ansible_opts -c local -i /etc/ansible/roles/role-under-test/tests/inventory /etc/ansible/roles/role-under-test/tests/$test_case/test.yml
+                RESULT+=$?
+            fi
         fi
     fi
 

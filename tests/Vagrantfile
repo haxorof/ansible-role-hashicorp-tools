@@ -19,10 +19,24 @@ Vagrant.configure(2) do |config|
   # do NOT download the iso file from a webserver
   config.vbguest.no_remote = true
 
+  ################################################################################
+  # Plugin: vagrant-gatling-rsync
+  # - vagrant plugin install vagrant-gatling-rsync
+  ################################################################################
+  # Download rsync and add it to PATH: https://www.itefix.net/content/cwrsync-free-edition
+  # Configure the window for gatling to coalesce writes.
+  #if Vagrant.has_plugin?("vagrant-gatling-rsync")
+  #  config.gatling.latency = 2.5
+  #  config.gatling.time_format = "%H:%M:%S"
+  #end
+  # Automatically sync when machines with rsync folders come up.
+  #config.gatling.rsync_on_startup = true
+
   config.vm.define "test" do |node|
     node.vm.box = "andrewhk/centos72-docker"
     node.vm.synced_folder "..", "/etc/ansible/roles/role-under-test"
-    config.vm.provision "shell", run: "once" do |s|
+    #node.vm.synced_folder "..", "/etc/ansible/roles/role-under-test", type: "rsync", rsync__exclude: [".git/", ".vagrant/"]
+    node.vm.provision "shell", run: "once" do |s|
       s.path = "vagrant-test.sh"
     end
   end
