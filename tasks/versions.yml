@@ -16,8 +16,8 @@
 - name: Set version fact for installed Hashicorp tools
   set_fact:
     hashicorp_tools_work: "{{hashicorp_tools_work | combine({ item.item.key: { \"installed_version\": item.files.0.path | regex_replace(hashicorp_path_pattern, '\\1') } }, recursive=True) }}"
-  when: item.files is defined and (item.files.0.path | match(hashicorp_path_pattern))
-  with_items: "{{installed_tools.results}}"
+  when: item.files is defined and item.files.0 is defined and (item.files.0.path | match(hashicorp_path_pattern))
+  with_items: "{{installed_tools.results}}"  
 
 - name: Lookup latest released versions
   command: "{{ hashicorp_tmp_dir }}/hashicorp_available_versions.py --url {{hashicorp_releases_location}} --tool {{item.key}}"

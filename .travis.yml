@@ -13,9 +13,9 @@ env:
   - distro: ubuntu14.04
   - distro: ubuntu16.04
 
-before_install:
+#before_install:
   # Pull container.
-  - 'docker pull williamyeh/ansible:${distro}'
+  #- 'docker pull williamyeh/ansible:${distro}'
 
 script:
   - bash ${PWD}/tests/test-distro.sh ${distro}

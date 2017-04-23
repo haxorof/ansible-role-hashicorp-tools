@@ -8,7 +8,7 @@ The name of the Linux distribution (alpine3, centos7...).
 .PARAMETER TestCase
 The name of the test case which maps to the directories located in the tests directory.
 .EXAMPLE
-test-distro.ps1 -distro alpine3 -test_case test1
+test-distro.ps1 -Distro alpine3 -TestCase test1
 #>
 param (
   [Parameter(Mandatory=$true)][string]$Distro,
@@ -36,6 +36,9 @@ Write-Verbose "Current location: $pwd"
 Write-Verbose "Role path: $RolePath"
 
 $Result = 0
+Write-Debug "Pull container $Container"
+docker pull $Container
+
 # Run container in detached state.
 Write-Debug "Start detached container $Container"
 docker run --detach --volume=${RolePath}:/etc/ansible/roles/role-under-test:ro $RunOpts $Container env TERM=xterm python /etc/ansible/roles/role-under-test/tests/trap.py > $ContainerIdFile
