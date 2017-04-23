@@ -67,7 +67,7 @@ if ($ContainerId) {
       docker exec --tty ${ContainerId} env TERM=xterm sh /etc/ansible/roles/role-under-test/tests/$TestCase/verify.sh
       $Result += $lastExitCode
 
-      if ($SkipTestIdempotence) {
+      if ($SkipTestIdempotence -eq 0) {
         Write-Host "[$TestCase] Test idempotence"
         docker exec --tty ${ContainerId} env TERM=xterm ansible-playbook $AnsibleOpts -c local -i /etc/ansible/roles/role-under-test/tests/inventory /etc/ansible/roles/role-under-test/tests/$TestCase/test.yml
         $Result += $lastExitCode

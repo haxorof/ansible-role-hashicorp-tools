@@ -71,12 +71,13 @@
   set_fact:
     hashicorp_tools_work: '{{hashicorp_tools_work | combine({ item.key: { "action": "replace" } }, recursive=True) }}'
   when:
-     (item.value.available_version is defined and
-      item.value.installed_version is defined and
-      item.value.available_version != item.value.installed_version and
-      item.value.state == "latest") or
-    (item.value.installed_version is defined and
-      item.value.installed_version != item.value.version)
+    (item.value.available_version is defined and 
+     item.value.installed_version is defined and 
+     item.value.available_version != item.value.installed_version and 
+     item.value.state == "latest") or
+    (item.value.version is defined and 
+     item.value.installed_version is defined and 
+     item.value.installed_version != item.value.version)
   with_dict: "{{hashicorp_tools_work}}"
   changed_when: False
 
