@@ -6,31 +6,31 @@ galaxy_info:
   platforms:
   - name: Alpine
     versions:
-    - all
+      - all
   - name: EL
     versions:
-    - 7
-    - 6
+      - 7
+      - 6
   - name: Debian
     versions:
-    - jessie
-    - sid
-    - wheezy
+      - jessie
+      - sid
+      - wheezy
   - name: Ubuntu
     versions:
-    - precise
-    - trusty
-    - xenial 
-  categories:
-  - system
-  - devops
-  - provision
-  - deployment
-  - consul
-  - packer
-  - nomad
-  - vault
-  - terraform
-  - hashicorp
+      - precise
+      - trusty
+      - xenial 
+  galaxy_tags:
+    - system
+    - devops
+    - provision
+    - deployment
+    - consul
+    - packer
+    - nomad
+    - vault
+    - terraform
+    - hashicorp
 
 dependencies: []

@@ -13,32 +13,8 @@ env:
   - distro: ubuntu14.04
   - distro: ubuntu16.04
 
-#before_install:
-  # Pull container.
-  #- 'docker pull williamyeh/ansible:${distro}'
-
 script:
   - bash ${PWD}/tests/test-distro.sh ${distro}
-  # Run container in detached state.
-  #- 'docker run --detach --volume="${PWD}":/etc/ansible/roles/role-under-test:ro --privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro williamyeh/ansible:${distro} env TERM=xterm python /etc/ansible/roles/role-under-test/tests/trap.py > "${container_id}"'
-
-  # Special case for alpine3 for apk to download packages
-  #- 'if [ "${distro}" == "alpine3" ]; then docker exec --tty "$(cat ${container_id})" env TERM=xterm apk update; fi'
-
-  # Ansible syntax check.
-  #- 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook -c local -i /etc/ansible/roles/role-under-test/tests/inventory /etc/ansible/roles/role-under-test/tests/test.yml --syntax-check'
-
-  # Test role.
-  #- 'docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook -c local -i /etc/ansible/roles/role-under-test/tests/inventory /etc/ansible/roles/role-under-test/tests/test.yml'
-
-  # Test role idempotence.
-  #- idempotence=$(mktemp)
-  #- docker exec --tty "$(cat ${container_id})" env TERM=xterm ansible-playbook -c local -i /etc/ansible/roles/role-under-test/tests/inventory /etc/ansible/roles/role-under-test/tests/test.yml | tee -a ${idempotence}
-  #- >
-  #  tail ${idempotence}
-  #  | grep -q 'changed=0.*failed=0'
-  #  && (echo 'Succeeded!' && exit 0)
-  #  || (echo 'Failed!' && exit 1)
 
 notifications:
     webhooks: https://galaxy.ansible.com/api/v1/notifications/
