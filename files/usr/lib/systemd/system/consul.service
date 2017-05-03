@@ -10,8 +10,8 @@ EnvironmentFile=-/etc/default/consul
 EnvironmentFile=-/etc/sysconfig/consul
 Environment=GOMAXPROCS=2
 Restart=on-failure
-ExecStartPre=/opt/bin/consul.io configtest -config-dir=/etc/opt/consul.d
-ExecStart=/opt/bin/consul.io agent $OPTIONS -config-dir=/etc/opt/consul.d -data-dir=/var/opt/consul
+ExecStartPre=/opt/bin/consul.io configtest $CONFIGTEST_OPTS
+ExecStart=/opt/bin/consul.io agent $AGENT_OPTS
 ExecReload=/bin/kill -s HUP $MAINPID
 KillSignal=SIGTERM
 TimeoutStopSec=5

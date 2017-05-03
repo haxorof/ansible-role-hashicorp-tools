@@ -1,5 +1,12 @@
 ---
-- name: Copy systemd related files for Consul
+- name: Add Consul user
+  user:
+    name: consul
+    createhome: no
+    shell: /sbin/nologin
+  become: true
+    
+- name: Copy systemd service files for Consul
   copy:
     src: files/usr/lib/systemd/system/consul.service
     dest: /usr/lib/systemd/system/consul.service
@@ -8,16 +15,19 @@
     - reload systemd
     - restart consul
 
-- name: Add Consul user
-  user:
-    name: consul
-    createhome: no
-    shell: /sbin/nologin
+- name: Generate Consul service default from template
+  template:
+    src: etc/default/consul.j2
+    dest: /etc/default/consul
+    owner: consul 
+    mode: 0755
   become: true
-    
-- name: Ensure /etc/opt/consul.d directory exists
+  notify:
+    - restart consul
+
+- name: Ensure {{ hashicorp_consul_config_dir }} directory exists
   file:
-    path: "/etc/opt/consul.d"
+    path: "{{ hashicorp_consul_config_dir }}"
     state: directory
     owner: consul 
     mode: 0755
@@ -25,64 +35,32 @@
 
 - name: Copy Consul configuration files
   copy:
-    src: "files/etc/opt/consul.d/"
-    dest: /etc/opt/consul.d
+    src: "{{ item }}"
+    dest: "{{ hashicorp_consul_config_dir }}/"
+  with_items: "{{ hashicorp_consul_config_files }}"
   become: true
   become_user: consul
+  notify:
+    - reload consul
 
-- name: "Check if local directory {{ playbook_dir }}/files/etc/opt/consul.d exists" 
-  local_action: stat path="{{ playbook_dir }}/files/etc/opt/consul.d"
-  register: consul_d_dir
-  ignore_errors: True
-
-- name: Copy Consul configuration files under {{ playbook_dir }}/files/etc/opt/consul.d
+- name: Generate Consul config file based on key-value configuration
   copy:
-    src: "{{ playbook_dir }}/files/etc/opt/consul.d/"
-    dest: /etc/opt/consul.d
-  when: consul_d_dir.stat.exists
+    content: "{{ hashicorp_consul_kv_config | to_nice_json }}"
+    dest: "{{ hashicorp_consul_config_dir }}/00-generated.json"
   become: true
-  become_user: consul
+  notify:
+    - reload consul
 
-- name: Ensure /var/opt/consul directory exists
+- name: Ensure {{ hashicorp_consul_data_dir }} directory exists
   file:
-    path: "/var/opt/consul"
+    path: "{{ hashicorp_consul_data_dir }}"
     state: directory
     owner: consul 
     mode: 0755
   become: true
-
-- name: "Check if local file {{ playbook_dir }}/files/etc/default/consul exists" 
-  local_action: stat path="{{ playbook_dir }}/files/etc/default/consul"
-  register: default_consul_file
-  ignore_errors: True
-
-- name: "Copy file {{ playbook_dir }}/files/etc/default/consul to /etc/default/consul"
-  copy: 
-    src: "{{ playbook_dir }}/files/etc/default/consul"
-    dest: /etc/default/consul
-    owner: consul 
-    mode: 0755
-  when: default_consul_file.stat.exists
-  become: true
   notify:
-    - restart consul
-
-- name: "Check if local file {{ playbook_dir }}/files/etc/sysconfig/consul exists" 
-  local_action: stat path="{{ playbook_dir }}/files/etc/sysconfig/consul"
-  register: default_consul_file
-  ignore_errors: True
-
-- name: "Copy file {{ playbook_dir }}/files/etc/sysconfig/consul to /etc/sysconfig/consul"
-  copy: 
-    src: "{{ playbook_dir }}/files/etc/sysconfig/consul"
-    dest: /etc/sysconfig/consul
-    owner: consul 
-    mode: 0755
-  when: default_consul_file.stat.exists
-  become: true
-  notify:
-    - restart consul
-
+    - reload consul
+    
 - name: Enable and start Consul service
   service:
     name: consul

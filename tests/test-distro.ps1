@@ -41,7 +41,7 @@ docker pull $Container
 
 # Run container in detached state.
 Write-Debug "Start detached container $Container"
-docker run --detach --volume=${RolePath}:/etc/ansible/roles/role-under-test:ro $RunOpts $Container env TERM=xterm python /etc/ansible/roles/role-under-test/tests/trap.py > $ContainerIdFile
+docker run --detach --volume=${RolePath}:/etc/ansible/roles/ansible-role-hashicorp-tools:ro $RunOpts $Container env TERM=xterm python /etc/ansible/roles/ansible-role-hashicorp-tools/tests/trap.py > $ContainerIdFile
 $Result += $lastExitCode
 [string]$ContainerId = Get-Content $ContainerIdFile -First 1
 Write-Verbose "Container ID: $ContainerId"
@@ -54,22 +54,22 @@ if ($ContainerId) {
   Write-Host "[$TestCase] Ansible version"
   docker exec --tty ${ContainerId} env TERM=xterm ansible --version
   Write-Host "[$TestCase] Ansible syntax check"
-  docker exec --tty ${ContainerId} env TERM=xterm ansible-playbook $AnsibleOpts -c local -i /etc/ansible/roles/role-under-test/tests/inventory /etc/ansible/roles/role-under-test/tests/$TestCase/test.yml --syntax-check
+  docker exec --tty ${ContainerId} env TERM=xterm ansible-playbook $AnsibleOpts -c local -i /etc/ansible/roles/ansible-role-hashicorp-tools/tests/inventory /etc/ansible/roles/ansible-role-hashicorp-tools/tests/$TestCase/test.yml --syntax-check
   $Result += $lastExitCode
 
   if ($Result -eq 0) {
     Write-Host "[$TestCase] Test"
-    docker exec --tty ${ContainerId} env TERM=xterm ansible-playbook $AnsibleOpts -c local -i /etc/ansible/roles/role-under-test/tests/inventory /etc/ansible/roles/role-under-test/tests/$TestCase/test.yml
+    docker exec --tty ${ContainerId} env TERM=xterm ansible-playbook $AnsibleOpts -c local -i /etc/ansible/roles/ansible-role-hashicorp-tools/tests/inventory /etc/ansible/roles/ansible-role-hashicorp-tools/tests/$TestCase/test.yml
     $Result += $lastExitCode
 
     if ($Result -eq 0) {
       Write-Host "[$TestCase] Verify"
-      docker exec --tty ${ContainerId} env TERM=xterm sh /etc/ansible/roles/role-under-test/tests/$TestCase/verify.sh
+      docker exec --tty ${ContainerId} env TERM=xterm sh /etc/ansible/roles/ansible-role-hashicorp-tools/tests/$TestCase/verify.sh
       $Result += $lastExitCode
 
       if ($SkipTestIdempotence -eq 0) {
         Write-Host "[$TestCase] Test idempotence"
-        docker exec --tty ${ContainerId} env TERM=xterm ansible-playbook $AnsibleOpts -c local -i /etc/ansible/roles/role-under-test/tests/inventory /etc/ansible/roles/role-under-test/tests/$TestCase/test.yml
+        docker exec --tty ${ContainerId} env TERM=xterm ansible-playbook $AnsibleOpts -c local -i /etc/ansible/roles/ansible-role-hashicorp-tools/tests/inventory /etc/ansible/roles/ansible-role-hashicorp-tools/tests/$TestCase/test.yml
         $Result += $lastExitCode
       }
     }
