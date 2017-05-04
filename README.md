@@ -18,6 +18,8 @@ Installs HashiCorp's open source DevOps Tool Suite.
   * Variable data under /var/opt
 * Add tools to system path for easier access
   * Symbolic links under /opt/bin
+* Consul integrated with systemd
+* Packer environment variables set up in accordans with [Filesystem Hierarchy Standard](http://www.pathname.com/fhs/)
 
 ## Requirements
 
