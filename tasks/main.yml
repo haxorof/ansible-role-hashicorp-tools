@@ -18,7 +18,7 @@
   when: item.value.action == "remove" or item.value.action == "replace"
   with_dict: "{{hashicorp_tools_work}}"
 
-- name: Downloads Packages
+- name: Downloads tools
   get_url:
     url: "{{ hashicorp_releases_location }}/{{item.key}}/{{item.value.version}}/{{item.key}}_{{item.value.version}}_{{hashicorp_architecture}}.zip"
     dest: "{{ hashicorp_tmp_dir }}"
@@ -27,6 +27,26 @@
   when: item.value.action == "install" or item.value.action == "replace"
   with_dict: "{{hashicorp_tools_work}}"
   changed_when: False
+
+- name: Download tool checksum files
+  get_url:
+    url: "{{ hashicorp_releases_location }}/{{item.key}}/{{item.value.version}}/{{item.key}}_{{item.value.version}}_SHA256SUMS"
+    dest: "{{ hashicorp_tmp_dir }}"
+    mode: 0755
+    validate_certs: no
+  when: item.value.action == "install" or item.value.action == "replace"
+  with_dict: "{{hashicorp_tools_work}}"
+  changed_when: False
+
+- name: Verify downloaded files
+  shell: cat "{{item.key}}_{{item.value.version}}_SHA256SUMS" | grep "{{hashicorp_architecture}}" | sha256sum -c -
+  args:
+    chdir: "{{ hashicorp_tmp_dir }}"
+  when: item.value.action == "install" or item.value.action == "replace"
+  with_dict: "{{hashicorp_tools_work}}"
+  register: cmd_sha256sum
+  changed_when: False
+  failed_when: cmd_sha256sum.rc|default(1) == 1
 
 - name: Ensure HashiCorp tool directory exists
   file:
