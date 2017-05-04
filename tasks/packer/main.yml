@@ -1,0 +1,21 @@
+---
+- name: Ensure Packer cache directory exists
+  file:
+    path: "{{ hashicorp_packer_cache_dir }}"
+    state: directory
+    mode: 0755
+  become: true
+
+- name: Ensure Packer log directory exists
+  file:
+    path: "{{ hashicorp_packer_log_path }}"
+    state: directory
+    mode: 0755
+  become: true
+
+- name: Setup Packer environment variable
+  template:
+    src: etc/profile.d/98-hashicorp-packer.j2
+    dest: /etc/profile.d/98-hashicorp-packer.sh
+    mode: 0755
+  become: true
