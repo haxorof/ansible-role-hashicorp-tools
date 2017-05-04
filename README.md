@@ -49,6 +49,30 @@ hashicorp_system_user: "{{ ansible_user_id }}"
 hashicorp_system_group: "{{ ansible_user_id }}"
 # Tool name suffix
 hashicorp_tool_suffix: ".io"
+
+# Enable Consul service
+hashicorp_consul_service_enabled: true
+# Consul data directory
+hashicorp_consul_data_dir: '/var/opt/consul'
+# Consul configuration directory
+hashicorp_consul_config_dir: '/etc/opt/consul.d'
+# Consul configuration files:
+hashicorp_consul_config_files: []
+# Default Consul opts for both agent and configtest
+hashicorp_consul_default_opts: '-config-dir={{ hashicorp_consul_config_dir }}'
+# Consul agent options
+hashicorp_consul_agent_opts: '{{ hashicorp_consul_default_opts }}'
+# Consul config test options
+hashicorp_consul_configtest_opts: '{{ hashicorp_consul_default_opts }}'
+# Default Key-Value configuration for Consul
+hashicorp_consul_default_kv_config:
+  data_dir: "{{ hashicorp_consul_data_dir }}"
+  log_level: 'INFO'
+  enable_syslog: true
+  leave_on_terminate: true
+  disable_update_check: true
+# Key-Value configuration which generates file /etc/opt/consul.d/00-generated.json
+hashicorp_consul_kv_config: "{{ hashicorp_consul_default_kv_config }}"
 ```
 
 ## Dependencies
