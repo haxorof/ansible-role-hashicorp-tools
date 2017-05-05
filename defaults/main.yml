@@ -48,6 +48,6 @@ hashicorp_packer_cache_dir: '/var/opt/packer/cache'
 # Packer log. Empty string or 0 equals disabled.
 hashicorp_packer_log: 0
 # Packer log directory.
-hashicorp_packer_log_path:  '/var/log/packer/'
+hashicorp_packer_log_dir:  '/var/log/packer'
 # Packer version checker. Disabled when set to 1.
 hashicorp_packer_checkpoint_disable: 1
