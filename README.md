@@ -1,7 +1,7 @@
 # ansible-role-hashicorp-tools
 
 [![Ansible Role](https://img.shields.io/ansible/role/14410.svg)](https://galaxy.ansible.com/haxorof/hashicorp-tools/)
-[![GitHub version](https://badge.fury.io/gh/haxorof%2Fansible-role-hashicorp-tools.svg)](https://badge.fury.io/gh/haxorof%2Fansible-role-hashicorp-tools)
+[![GitHub tag](https://img.shields.io/github/tag/haxorof/ansible-role-hashicorp-tools.svg)](https://github.com/haxorof/ansible-role-hashicorp-tools)
 [![Build Status](https://travis-ci.org/haxorof/ansible-role-hashicorp-tools.svg?branch=master)](https://travis-ci.org/haxorof/ansible-role-hashicorp-tools)
 
 Installs HashiCorp's open source DevOps Tool Suite.
