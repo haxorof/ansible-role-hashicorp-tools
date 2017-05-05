@@ -1,0 +1,14 @@
+---
+- hosts: test-host
+  roles:
+    - role: ansible-role-hashicorp-tools
+      # Development server mode
+      hashicorp_consul_service_enabled: false
+      hashicorp_consul_kv_config_additions:
+        ui: true
+        server: true
+      hashicorp_consul_kv_config: "{{ hashicorp_consul_default_kv_config | combine(hashicorp_consul_kv_config_additions) }}"
+      hashicorp_tools:
+        consul:
+          state: latest
+            

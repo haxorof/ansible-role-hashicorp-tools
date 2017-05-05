@@ -1,0 +1,76 @@
+---
+- name: Add Consul user
+  user:
+    name: consul
+    createhome: no
+    shell: /sbin/nologin
+  become: true
+  when: ansible_distribution != 'Alpine'
+
+- name: Set owner fact to be consul
+  set_fact:
+    consul_owner: consul
+  when: ansible_distribution != 'Alpine'
+
+# shadow is required because useradd is normally not installed in busybox/alpine: 
+# https://github.com/ansible/ansible/issues/23944
+- name: Set owner fact to be {{ ansible_user_id }} because useradd does not exist
+  set_fact:
+    consul_owner: "{{ ansible_user_id }}"
+  when: ansible_distribution == 'Alpine'
+
+- name: Ensure /etc/default directory exists
+  file:
+    path: /etc/default
+    state: directory
+    mode: 0755
+  become: true
+  when: ansible_distribution == 'Alpine' 
+
+- name: Generate Consul defaults from template
+  template:
+    src: etc/default/consul.j2
+    dest: /etc/default/consul
+    owner: "{{ consul_owner }}"
+    mode: 0755
+  become: true
+  notify:
+    - restart consul
+
+- name: Ensure {{ hashicorp_consul_config_dir }} directory exists
+  file:
+    path: "{{ hashicorp_consul_config_dir }}"
+    state: directory
+    owner: "{{ consul_owner }}" 
+    mode: 0755
+  become: true
+
+- name: Copy Consul configuration files
+  copy:
+    src: "{{ item }}"
+    dest: "{{ hashicorp_consul_config_dir }}/"
+  with_items: "{{ hashicorp_consul_config_files }}"
+  become: true
+  become_user: "{{ consul_owner }}"
+  notify:
+    - reload consul
+
+- name: Generate Consul config file based on key-value configuration
+  copy:
+    content: "{{ hashicorp_consul_kv_config | to_nice_json }}"
+    dest: "{{ hashicorp_consul_config_dir }}/00-generated.json"
+  become: true
+  notify:
+    - reload consul
+
+- name: Ensure {{ hashicorp_consul_data_dir }} directory exists
+  file:
+    path: "{{ hashicorp_consul_data_dir }}"
+    state: directory
+    owner: "{{ consul_owner }}" 
+    mode: 0755
+  become: true
+  notify:
+    - reload consul
+    
+    

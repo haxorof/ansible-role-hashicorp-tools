@@ -12,7 +12,7 @@ if [[ "$distro" == "" ]]; then
 fi
 
 if [[ "$test_case" == "" ]]; then
-    test_case=test1
+    test_case=test_state
 fi
 
 if [[ "$skip_test_idempotence" == "1" ]]; then

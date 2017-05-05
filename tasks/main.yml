@@ -80,10 +80,14 @@
   with_dict: "{{hashicorp_tools_work}}"
 
 - include: consul/main.yml
-  when: (hashicorp_tools_work.consul.state|default("")) != "" and (hashicorp_tools_work.consul.state|default("")) != "absent"
+  when: hashicorp_tools_work.consul is defined and 
+        hashicorp_tools_work.consul.state is defined and 
+        hashicorp_tools_work.consul.state|default("") != "absent"
 
 - include: packer/main.yml
-  when: (hashicorp_tools_work.packer.state|default("")) != "" and (hashicorp_tools_work.packer.state|default("")) != "absent"
+  when: hashicorp_tools_work.packer is defined and 
+        hashicorp_tools_work.packer.state is defined and 
+        hashicorp_tools_work.packer.state|default("") != "absent"
 
 - include: cleanup.yml
 

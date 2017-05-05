@@ -1,0 +1,7 @@
+---
+- hosts: test-host
+  roles:
+    - role: ansible-role-hashicorp-tools
+      hashicorp_tools:
+        packer:
+          state: latest

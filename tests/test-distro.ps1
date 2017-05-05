@@ -12,7 +12,7 @@ test-distro.ps1 -Distro alpine3 -TestCase test1
 #>
 param (
   [Parameter(Mandatory=$true)][string]$Distro,
-  [string]$TestCase = "test1",
+  [string]$TestCase = "test_state",
   [bool]$SkipTestIdempotence
 )
 

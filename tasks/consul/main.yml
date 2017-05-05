@@ -1,4 +1,6 @@
 ---
+- include: config.yml
+
 - name: Determine if systemd is present in system
   stat:
     path: /etc/systemd
