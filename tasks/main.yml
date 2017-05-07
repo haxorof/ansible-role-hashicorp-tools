@@ -39,7 +39,7 @@
   changed_when: False
 
 - name: Verify downloaded files
-  shell: cat "{{item.key}}_{{item.value.version}}_SHA256SUMS" | grep "{{hashicorp_architecture}}" | sha256sum -c -
+  shell: cat "{{item.key}}_{{item.value.version}}_SHA256SUMS" | grep "{{hashicorp_architecture}}.zip" | sha256sum -c -
   args:
     chdir: "{{ hashicorp_tmp_dir }}"
   when: item.value.action == "install" or item.value.action == "replace"
