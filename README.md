@@ -21,6 +21,10 @@ Installs HashiCorp's open source DevOps Tool Suite.
 * Consul integrated with systemd
 * Packer environment variables set up in accordans with [Filesystem Hierarchy Standard](http://www.pathname.com/fhs/)
 
+## Changelog
+
+See changelog [here](https://github.com/haxorof/ansible-role-hashicorp-tools/blob/master/CHANGELOG.md)
+
 ## Requirements
 
 No additional requirements.
