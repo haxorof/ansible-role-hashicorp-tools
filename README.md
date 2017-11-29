@@ -35,29 +35,6 @@ No additional requirements.
 Variables related to this role are listed below:
 
 ```yaml
-# HashiCorp tools to be affected by this role.
-hashicorp_tools:
-  <tool-name>:
-    state: (<version>, present, latest, absent)
-
-# Release location base URL. Example of final URL:
-# https://releases.hashicorp.com/packer/0.12.0/packer_0.12.0_linux_amd64.zip
-hashicorp_releases_location: https://releases.hashicorp.com
-# System tmp directory.
-hashicorp_system_tmp_dir: /var/tmp
-# HashiCorp tmp directory.
-hashicorp_tmp_dir: "{{ hashicorp_system_tmp_dir }}/hashicorp"
-# Where HashiCorp tools shall be installed under.
-hashicorp_install_dir: /opt
-# Where symbolic links shall be added.
-hashicorp_bin_dir: /opt/bin
-# Which system user.
-hashicorp_system_user: "{{ ansible_user_id }}"
-# Which system group.
-hashicorp_system_group: "{{ ansible_user_id }}"
-# Tool name suffix.
-hashicorp_tool_suffix: ".io"
-
 # Enable Consul service.
 hashicorp_consul_service_enabled: true
 # Consul data directory.
@@ -66,12 +43,12 @@ hashicorp_consul_data_dir: '/var/opt/consul'
 hashicorp_consul_config_dir: '/etc/opt/consul.d'
 # Consul configuration files:
 hashicorp_consul_config_files: []
-# Default Consul opts for both agent and configtest.
+# Default Consul opts for agent
 hashicorp_consul_default_opts: '-config-dir={{ hashicorp_consul_config_dir }}'
 # Consul agent options.
 hashicorp_consul_agent_opts: '{{ hashicorp_consul_default_opts }}'
 # Consul config test options.
-hashicorp_consul_configtest_opts: '{{ hashicorp_consul_default_opts }}'
+hashicorp_consul_configtest_opts: '-quiet {{ hashicorp_consul_config_dir }}'
 # Default Key-Value configuration for Consul.
 hashicorp_consul_default_kv_config:
   data_dir: "{{ hashicorp_consul_data_dir }}"
