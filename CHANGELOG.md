@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased](../../releases/tag/X.Y.Z)
 
+## [1.0.0](../../releases/tag/1.0.0) - 2017-12-06
+
 ### Fixed
 
 - Replace configtest command which was deprecated in Consul 1.0.0  ([#20](../../issues/20))
