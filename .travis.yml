@@ -1,8 +1,6 @@
 ---
 sudo: required
-
 services: docker
-
 env:
   - distro: alpine3
   - distro: centos6
@@ -12,15 +10,20 @@ env:
   - distro: ubuntu12.04
   - distro: ubuntu14.04
   - distro: ubuntu16.04
-
 script:
   - bash ${PWD}/tests/test-distro.sh ${distro}
-
 notifications:
-    webhooks: https://galaxy.ansible.com/api/v1/notifications/
-    email: false
-    pushover:
-      api_key:
-        secure: U8xG2QLHAYdwEH5ZHzxsN5lWxgugCWHfhzdBU9BxGDnrIHLNbfkhPp8mQrUfgZyLqNdK7hoQTUeW3nl0/BgL9qlcXB0nqgE8eVPmdAfJRi0xueUq27SU3NGGyB+zcyj5lWqXnsYhbhZN8EJ92ECsLmdcqZpYTL2GSVMjaFW1Mq2CZpVaN7T7ycW1PkJoBzzVTl1LXmB226JfbQVh6fP2KDf6Y9oskOzqfkfUpl9v54ALKWmLoTmDff7z8uyA8YEJ3S4KsxO0aBRgqlbfAjeSf8wu7f9WQOjsjvhxjXlwzET98AZHvXwLJIi07XyqCmAW0THJF4RWuhSLKyg54ttZ1EfHF/JzGFgqqNDYVLUvCdqbS+Bw00oDt6Zv/xeaY3inCfTGcZ8b3WnFCyqJJ/oizlz59oAFz2VUSld7bRxFZ9V4p0h803K8BcHa0Tguadw2PZadBe8YZ5zez2R2PESEBY20TA0uXUzRgUKe4SsUGxpj29TegtSemfP6uj09VqtaF17G9Y0APkXOLWZtwI3aymfFseYeAM1kaO6rGRAWvpu6LehNHAnk6sfcnhRVHkXfuZPlw5tAS0qUGKl0Oztbf9riXRZ4k3g/CM52muQLPsMPXnzU384GLtnjWV8s4/FK6Vc/c9YvJaSSlO7PIj+jhiui2y6AFW+RupMLFJ9x0Kk=
-      users:
-        secure: jEluC1+xjX80z01gmP10bQVOG2gdmAHRwti/wZlzk+mRamdnq2vIcUnoT0HjNxGMfR3z2cU6ufTRGUQwGREX0tMl9WqsfFUJ4g1l8kZR6bD0jt5lFmg3eup4bF1VPD5wIWbXvVqPUibKAKGFKkRQSX5UAXzMAFpoYuAh74+RUiV0ISBmLntS/wW1j6DlIh2/e9I9yb0f/0MZlV8x2QBTHhTjnALzfvnoPEteSCfSawQUf9+pSNv4HyoPWJq2qafeA2hiPwC7AzQ4JhgdPKQ8P6yfSgqnwdG43kgNiZMqFMg/yn5n2f6vPMxiQn2T7Dq7As82G/v1bIAr1jhckEtF0AA9ydia4b7L/13nzbVIQyaP11KQx9MzWC1m28olnjfW8hTgTtlDJgfZJeB84H9fqYr64Lf/Mkji+FYPDQ8+9p1kvQic5qMxcvehGxAS2b/60NoboweaM78aCoEIsWXjMNT0xApWKvPQ7w/sjzIvDFiWLySB0kvzQvlwr2NhhC/Ycg8QA9NCupswv2aEbKbKbizkjjig8hc0ze09LAj9C2otLdtpP69WoZOY7FI6VVTdGzCNqI9oFCf0cOR8tWUkSg2ddwlVSi7XryPVniUh59Kb+sGklu1wXI3IiMcqtGGqqOvG0+aVP21yuuyAnpg2owXTOtOeUSQclNDBK597waE=
+  webhooks:
+    urls:
+      - https://galaxy.ansible.com/api/v1/notifications/
+    on_success: always
+    on_failure: never
+    on_start: never
+    on_cancel: never
+    on_error: never
+  email: false
+  pushover:
+    api_key:
+      secure: J4WRuDo+vyIbhUxtvZDkIfmyqwVnubSM+C4bMd2xzfu+wu9Xp1PI40LmmJhbXUwHULO4DLw90dRWHVVotS0rwwA6VmM66kUyfUZfuSGb78KuM9J5xHI+5XhkCHjPEV3CqoiXVnANkxy9PqQ4h7URJWwl+nuObK1exwLtCv7uQV1ex7d49Ae2JWkgNBE7huG4POfmeTASD+iy/TfbG4BoJZhjMB0HcnCl+SZhy909uNBz4VSTFnx58G8Zb4GYFdNfKZBfJkS83TRtd34pMHaNCOJMc7pS9XN7J1rPaWBWIbeVAc22GZxfavRaY9SMeqpw1KO+HJG/EcWtMJ1ybpF9PsUAdHY5WESfQwL1f09qf/KPuVP3cRAE3SqXcgZ/RKJK5jGD56rRjfoPQ/pgDRb93ygqXIggX01JQ/TKYlZ9aReQmyRGrewnvjvqe6JsMXEU2uyx9C6dkJdjyD2MyyMwc+y2L8RDE+zvtr5QL74ofbiXvo+9CSocvRQcNJdQ+QbL/e3ti3WXOHzAhlRYwPVUI1U71fw8ijuf/ChiPfCuydL5rZAT1qKRSIa7+vMd3rxl7UclIA17yAetR/GxMnGeg+oc0kF3TokcjD7EkBcaZMDOOzx7TwvOZQIsYF11c1B5yh6lnSFSIZ0yPeMKhHPCpuxqzHwckU+5TO8FReL+1kw=
+    users:
+      secure: ZUR1flLbKM8cS+rrWmnFTwtfC+TKK7V8XTrpX3Q/bOYDpuv3BLzAj/rP8+19uNMakD1E1OlU7VTQgpetBvGTayDfRXz7sC4ksErFhkow1ubUQ5x5c9srlw8WggxyPPhzS2OokUfx76q2TBZ2VpSc5e8gaJQCUbPdIXevwue82ZSlBoMigLFQX1TXvh4rB3KKBTZvE/bqtZ4NeG8Eeq7IDjJaJsiQsAaJ/tt7zFDOveoNUX1zhclGwCb2cpSJGzQ8heSd1lU6Vo0HXjj3nEigtcAVPBe/9rTJd3ZyVihiPoeRzxziTL5r49PZAFca4BHabLw59Mss/SCVHZVVyAPCBnD4Ze7cFzKLU564woGZU+PVmTj+Kl/16k7+1sGEOFSu9/vNKy0DZ1P7qHo0EMOToyfeucKyk0K4ApP1jIg/7RkDSHhlJEn204jXi5qMC7/bs0DjGN5+RwMbyRrPuhx/Q+9wGjajch5hfb90LqyTDHz+la2by8iDnk83jyRsFrfkWMO+5DvrLtMhsqZ6y6+9zTvvBM6fYVqBTszgimTykXdeWIPE+kRWAM2KzFjGXXOg+zbUBDEEbcOU7fqgKsw6CM8uYX8Gqpp9OXVf1am79vSdsUkVvQ0hRBX0lTRkjgBScX8uXvwMK8CcqRHqfkTkEyLZkF9BlB4h/eLBo+FZmik=
