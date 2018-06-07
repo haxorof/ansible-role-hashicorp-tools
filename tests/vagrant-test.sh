@@ -4,7 +4,7 @@
 # Shall be "in-sync" with .travis.yml scripts.
 ################################################################################
 # Not yet Ansible 2.4 version in geerlingguy/docker-ubuntu1804-ansible
-distros="geerlingguy/docker-ubuntu1204-ansible geerlingguy/docker-ubuntu1404-ansible geerlingguy/docker-ubuntu1604-ansible \
+distros="williamyeh/ansible:alpine3 #geerlingguy/docker-ubuntu1204-ansible geerlingguy/docker-ubuntu1404-ansible geerlingguy/docker-ubuntu1604-ansible \
     geerlingguy/docker-centos6-ansible geerlingguy/docker-centos7-ansible \
     geerlingguy/docker-debian8-ansible geerlingguy/docker-debian9-ansible \
     geerlingguy/docker-fedora27-ansible"
