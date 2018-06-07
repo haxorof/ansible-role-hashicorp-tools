@@ -1,5 +1,5 @@
 ---
-- include: config.yml
+- include_tasks: config.yml
 
 - name: Determine if systemd is present in system
   stat:
@@ -7,5 +7,5 @@
   register: systemd_dir
   changed_when: False
 
-- include: systemd.yml
+- include_tasks: systemd.yml
   when: hashicorp_consul_service_enabled|bool == true and systemd_dir.stat.exists
