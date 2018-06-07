@@ -3,7 +3,11 @@
 # This is used in the provisioning step of the Vagrantfile.
 # Shall be "in-sync" with .travis.yml scripts.
 ################################################################################
-distros="alpine3 centos6 centos7 debian7 debian8 ubuntu12.04 ubuntu14.04 ubuntu16.04"
+# Not yet Ansible 2.4 version in geerlingguy/docker-ubuntu1804-ansible
+distros="geerlingguy/docker-ubuntu1204-ansible geerlingguy/docker-ubuntu1404-ansible geerlingguy/docker-ubuntu1604-ansible \
+    geerlingguy/docker-centos6-ansible geerlingguy/docker-centos7-ansible \
+    geerlingguy/docker-debian8-ansible geerlingguy/docker-debian9-ansible \
+    geerlingguy/docker-fedora27-ansible"
 
 script_dir=/vagrant
 

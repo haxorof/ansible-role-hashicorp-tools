@@ -26,7 +26,7 @@ $AnsibleOpts = $env:ANSIBLE_OPTS
 $RunOpts = "--privileged"
 $ContainerIdFile = [System.IO.Path]::GetTempFileName()
 $RolePath = "$pwd\.."
-$Container = "williamyeh/ansible:$Distro"
+$Container = "$Distro"
 
 Write-Verbose "Ansible options: $AnsibleOpts"
 Write-Verbose "Docker container: $Container"

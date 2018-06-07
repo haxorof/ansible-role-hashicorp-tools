@@ -33,8 +33,8 @@ Vagrant.configure(2) do |config|
   #config.gatling.rsync_on_startup = true
 
   config.vm.define "test" do |node|
-    node.vm.box = "andrewhk/centos72-docker"
-    node.vm.synced_folder "..", "/etc/ansible/roles/role-under-test"
+    node.vm.box = "chaifeng/ubuntu-16.04-docker-18.03"
+    node.vm.synced_folder "..", "/etc/ansible/roles/ansible-role-hashicorp-tools", :mount_options => ["ro"]
     #node.vm.synced_folder "..", "/etc/ansible/roles/role-under-test", type: "rsync", rsync__exclude: [".git/", ".vagrant/"]
     node.vm.provision "shell", run: "once" do |s|
       s.path = "vagrant-test.sh"

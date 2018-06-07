@@ -2,14 +2,15 @@
 sudo: required
 services: docker
 env:
-  - distro: alpine3
-  - distro: centos6
-  - distro: centos7
-  - distro: debian7
-  - distro: debian8
-  - distro: ubuntu12.04
-  - distro: ubuntu14.04
-  - distro: ubuntu16.04
+  - distro: williamyeh/ansible:alpine3
+  - distro: geerlingguy/docker-ubuntu1204-ansible
+  - distro: geerlingguy/docker-ubuntu1404-ansible
+  - distro: geerlingguy/docker-ubuntu1604-ansible
+  - distro: geerlingguy/docker-centos6-ansible
+  - distro: geerlingguy/docker-centos7-ansible
+  - distro: geerlingguy/docker-debian8-ansible
+  - distro: geerlingguy/docker-debian9-ansible
+  - distro: geerlingguy/docker-fedora27-ansible  
 script:
   - bash ${PWD}/tests/test-distro.sh ${distro}
 notifications:

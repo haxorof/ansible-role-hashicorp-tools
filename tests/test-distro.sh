@@ -34,9 +34,9 @@ if [[ -d "/vagrant" ]]; then
 fi
 
 RESULT=0
-docker pull williamyeh/ansible:${distro}
+docker pull ${distro}
 # Run container in detached state.
-docker run --detach --volume="${PWD}":/etc/ansible/roles/ansible-role-hashicorp-tools:ro ${run_opts} williamyeh/ansible:${distro} ${init} > "${container_id_file}"
+docker run --detach --volume="${PWD}":/etc/ansible/roles/ansible-role-hashicorp-tools:ro ${run_opts} ${distro} ${init} > "${container_id_file}"
 RESULT+=$?
 
 container_id="$(cat ${container_id_file})"
