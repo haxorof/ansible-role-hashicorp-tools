@@ -26,6 +26,10 @@ Installs HashiCorp's open source DevOps Tool Suite.
 
 See changelog [here](https://github.com/haxorof/ansible-role-hashicorp-tools/blob/master/CHANGELOG.md)
 
+## Ansible Compatibility
+
+* `2.4` or later
+
 ## Requirements
 
 No additional requirements.
