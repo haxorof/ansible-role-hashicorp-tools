@@ -20,7 +20,7 @@ galaxy_info:
     versions:
       - precise
       - trusty
-      - xenial 
+      - xenial
   galaxy_tags:
     - system
     - devops

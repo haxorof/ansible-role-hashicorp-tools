@@ -2,7 +2,8 @@
 # handlers file
 
 - name: reload systemd
-  command: systemctl daemon-reload
+  systemd:
+    daemon_reload: yes
   become: true
   when: hashicorp_consul_service_enabled|bool == true
 
@@ -19,4 +20,3 @@
     state: reloaded
   become: true
   when: hashicorp_consul_service_enabled|bool == true
-  
