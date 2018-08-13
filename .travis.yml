@@ -10,11 +10,19 @@ env:
   - distro: geerlingguy/docker-centos7-ansible
   - distro: geerlingguy/docker-debian8-ansible
   - distro: geerlingguy/docker-debian9-ansible
-  - distro: geerlingguy/docker-fedora27-ansible  
+  - distro: geerlingguy/docker-fedora27-ansible
 script:
   - bash ${PWD}/tests/test-distro.sh ${distro}
 notifications:
-  webhooks: https://galaxy.ansible.com/api/v1/notifications/
+  webhooks:
+    urls:
+    - https://galaxy.ansible.com/api/v1/notifications/
+    - https://galaxy-qa.ansible.com/api/v1/notifications/
+    on_success: always
+    on_failure: never
+    on_start: never
+    on_cancel: never
+    on_error: never
   email: false
   pushover:
     api_key:
