@@ -10,6 +10,7 @@ from optparse import OptionParser
 
 VERSION = '0.1'
 
+
 class HashiCorpVersionParser(HTMLParser):
     """Parses HTML with anchors which contains the versions"""
     parse_version = False
@@ -34,6 +35,7 @@ class HashiCorpVersionParser(HTMLParser):
         """Returns a list of all parsed versions"""
         return self.versions
 
+
 def arg_parser():
     """Parses command arguments"""
     parser = OptionParser(description='HashiCorp Tools available version fetcher')
@@ -49,6 +51,7 @@ def arg_parser():
                       default='latest',
                       help='Released version, all or latest.')
     return parser
+
 
 def main(parser):
     """Main function"""
@@ -89,6 +92,7 @@ def main(parser):
                 if version.startswith(options.release):
                     sys.stdout.write(version + ' ')
     sys.stdout.flush()
+
 
 if __name__ == "__main__":
     main(arg_parser())
