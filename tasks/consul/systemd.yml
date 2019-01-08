@@ -1,4 +1,13 @@
 ---
+# Ubuntu compiles systemd with the --enable-split-usr option (without this option systemd assumes /lib is a symlink to /usr/lib)
+- name: Creates /usr/lib/systemd/system directory if missing
+  file:
+    path: /usr/lib/systemd/system
+    state: directory
+    owner: root
+    group: root
+    mode: 0751
+
 - name: Copy systemd service files for Consul
   copy:
     src: files/usr/lib/systemd/system/consul.service
