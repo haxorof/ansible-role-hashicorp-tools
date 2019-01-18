@@ -7,9 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased](../../releases/tag/X.Y.Z)
 
+## [1.1.1](../../releases/tag/1.1.0) - 2019-01-18
+
 ### Fixed
 
 - Fixed minor issues reported by ansible-lint
+- Adding workaround for Ubuntu systemd  ([#21](../../issues/21))
 
 ## [1.1.0](../../releases/tag/1.1.0) - 2018-06-20
 
