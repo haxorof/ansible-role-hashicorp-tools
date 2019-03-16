@@ -1,4 +1,5 @@
-# ansible-role-hashicorp-tools
+# ansible-role-hashicorp-tools ![Deprecated](https://img.shields.io/badge/deprecated-yes-red.svg?style=popout-square)
+
 
 [![Ansible Role](https://img.shields.io/ansible/role/14410.svg)](https://galaxy.ansible.com/haxorof/hashicorp-tools/)
 [![GitHub tag](https://img.shields.io/github/tag/haxorof/ansible-role-hashicorp-tools.svg)](https://github.com/haxorof/ansible-role-hashicorp-tools)
