@@ -8,4 +8,4 @@
   changed_when: False
 
 - include_tasks: systemd.yml
-  when: hashicorp_consul_service_enabled|bool == true and systemd_dir.stat.exists
+  when: hashicorp_consul_service_enabled | bool == true and systemd_dir.stat.exists

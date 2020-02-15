@@ -5,18 +5,18 @@
   systemd:
     daemon_reload: yes
   become: true
-  when: hashicorp_consul_service_enabled|bool == true
+  when: hashicorp_consul_service_enabled | bool == true
 
 - name: restart consul
   service:
     name: consul
     state: restarted
   become: true
-  when: hashicorp_consul_service_enabled|bool == true
+  when: hashicorp_consul_service_enabled | bool == true
 
 - name: reload consul
   service:
     name: consul
     state: reloaded
   become: true
-  when: hashicorp_consul_service_enabled|bool == true
+  when: hashicorp_consul_service_enabled | bool == true
